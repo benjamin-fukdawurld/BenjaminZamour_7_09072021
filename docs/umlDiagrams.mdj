@@ -63,7 +63,7 @@
 											"top": 567,
 											"width": 207,
 											"height": 13,
-											"text": "User"
+											"text": "Employee"
 										},
 										{
 											"_type": "LabelView",
@@ -517,7 +517,7 @@
 											"top": 373,
 											"width": 303,
 											"height": 13,
-											"text": "+userId: id",
+											"text": "+employeeId: id",
 											"horizontalAlignment": 0
 										},
 										{
@@ -831,7 +831,7 @@
 											"top": 813,
 											"width": 247,
 											"height": 13,
-											"text": "+userId: id",
+											"text": "+employeeId: id",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1111,7 +1111,7 @@
 											"top": 622,
 											"width": 199,
 											"height": 13,
-											"text": "+userId: id",
+											"text": "+employeeId: id",
 											"horizontalAlignment": 0
 										},
 										{
@@ -3672,7 +3672,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "User",
+					"name": "Employee",
 					"ownedElements": [
 						{
 							"_type": "UMLAssociation",
@@ -3931,7 +3931,7 @@
 							"_parent": {
 								"$ref": "AAAAAAF6kVeLaEsGQPw="
 							},
-							"name": "userId",
+							"name": "employeeId",
 							"type": "id"
 						},
 						{
@@ -4105,7 +4105,7 @@
 							"_parent": {
 								"$ref": "AAAAAAF6kVzyXEt4fG8="
 							},
-							"name": "userId",
+							"name": "employeeId",
 							"type": "id"
 						},
 						{
@@ -4233,7 +4233,7 @@
 							"_parent": {
 								"$ref": "AAAAAAF6kWEWdEvRjM4="
 							},
-							"name": "userId",
+							"name": "employeeId",
 							"type": "id"
 						},
 						{
