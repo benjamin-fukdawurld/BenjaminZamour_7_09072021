@@ -1,10 +1,9 @@
-import dotenv from 'dotenv';
+import './config';
+
 import https from 'https';
 import fs from 'fs';
 
 import { createApp } from './app';
-
-dotenv.config();
 
 function normalizePort(port: string | number): number {
   let value = 0;
