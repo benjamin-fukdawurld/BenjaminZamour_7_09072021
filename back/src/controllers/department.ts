@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import pool from '../database';
 import { Department } from '../models/Department';
 
-class DepartmentController {
+export class DepartmentController {
   private static formatName(name: string): string {
     return name
       .trim()
@@ -14,6 +14,18 @@ class DepartmentController {
 
   private static async queryDepartment(id: number): Promise<Department | null> {
     const department = await pool.query('SELECT * FROM department WHERE id = $1;', [id]);
+
+    if (!department || department?.rows.length === 0) {
+      return null;
+    }
+
+    return department.rows[0];
+  }
+
+  public static async queryDepartmentByName(name: string): Promise<Department | null> {
+    const department = await pool.query('SELECT * FROM department WHERE name = $1;', [
+      DepartmentController.formatName(name),
+    ]);
 
     if (!department || department?.rows.length === 0) {
       return null;
