@@ -1,10 +1,10 @@
-import dotenv from 'dotenv';
+import './config';
+
 import https from 'https';
 import fs from 'fs';
 
 import { createApp } from './app';
-
-dotenv.config();
+import department from './routes/department';
 
 function normalizePort(port: string | number): number {
   let value = 0;
@@ -28,7 +28,17 @@ const options = {
   cert: fs.readFileSync(process.env.HTTPS_CERTIFICATE ?? 'cert.pem'),
 };
 
-const server = https.createServer(options, createApp({}));
+const server = https.createServer(
+  options,
+  createApp({
+    routes: [
+      {
+        path: '/departments',
+        router: department,
+      },
+    ],
+  }),
+);
 
 server.on('error', (error: Error | any) => {
   if (error.syscall && error.syscall !== 'listen') {
