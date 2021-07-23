@@ -7,6 +7,7 @@ import { createApp } from './app';
 
 import department from './routes/department';
 import user from './routes/user';
+import post from './routes/post';
 
 function normalizePort(port: string | number): number {
   let value = 0;
@@ -41,6 +42,10 @@ const server = https.createServer(
       {
         path: '/users',
         router: user,
+      },
+      {
+        path: '/posts',
+        router: post,
       },
     ],
   }),
