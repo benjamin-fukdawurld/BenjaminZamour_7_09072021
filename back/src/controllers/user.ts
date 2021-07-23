@@ -7,11 +7,24 @@ import pool from '../database';
 import { User } from '../models/User';
 import { schema as passwordSchema } from '../middlewares/password-check';
 
-import { DepartmentController } from '../controllers/department';
+import { DepartmentController } from './department';
 
 assert(process.env.TOKEN_KEY);
 
 class UserController {
+  private static userEditableColumns(): string[] {
+    return [
+      'login',
+      'email',
+      'password',
+      'firstName',
+      'lastName',
+      'jobTitle',
+      'birthDate',
+      'biography',
+    ];
+  }
+
   private static async queryUser(id: number, fields = ['id', 'login']): Promise<User | null> {
     const user = await pool.query(`SELECT ${fields.join(', ')} FROM employee WHERE id = $1;`, [id]);
 
@@ -87,16 +100,7 @@ class UserController {
 
       const columns = Object.keys(req.body).filter(
         (column: string) =>
-          [
-            'login',
-            'email',
-            'password',
-            'firstName',
-            'lastName',
-            'jobTitle',
-            'birthDate',
-            'biography',
-          ].includes(column) && req.body[column],
+          UserController.userEditableColumns().includes(column) && req.body[column],
       );
 
       if (columns.includes('password')) {
