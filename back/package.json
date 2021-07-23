@@ -12,6 +12,7 @@
   "author": "Benjamin Fukdawurld",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@types/multer": "^1.4.7",
     "argon2": "^0.28.2",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
@@ -26,7 +27,7 @@
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.4",
-    "@types/node": "^16.3.0",
+    "@types/node": "^16.4.1",
     "@types/pg": "^8.6.1",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
