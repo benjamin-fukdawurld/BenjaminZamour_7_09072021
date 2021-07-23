@@ -4,7 +4,9 @@ import https from 'https';
 import fs from 'fs';
 
 import { createApp } from './app';
+
 import department from './routes/department';
+import user from './routes/user';
 
 function normalizePort(port: string | number): number {
   let value = 0;
@@ -35,6 +37,10 @@ const server = https.createServer(
       {
         path: '/departments',
         router: department,
+      },
+      {
+        path: '/users',
+        router: user,
       },
     ],
   }),
