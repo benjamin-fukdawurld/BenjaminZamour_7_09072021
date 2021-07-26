@@ -1,7 +1,6 @@
 import './config';
 
-import https from 'https';
-import fs from 'fs';
+import http from 'http';
 
 import { createApp } from './app';
 
@@ -26,13 +25,7 @@ function normalizePort(port: string | number): number {
 
 const port = normalizePort(process.env.SERVER_PORT ?? 5000);
 
-const options = {
-  key: fs.readFileSync(process.env.HTTPS_KEY ?? 'key.pem'),
-  cert: fs.readFileSync(process.env.HTTPS_CERTIFICATE ?? 'cert.pem'),
-};
-
-const server = https.createServer(
-  options,
+const server = http.createServer(
   createApp({
     routes: [
       {
