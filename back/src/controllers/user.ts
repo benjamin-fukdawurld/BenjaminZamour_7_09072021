@@ -10,6 +10,7 @@ import { schema as passwordSchema } from '../middlewares/password-check';
 import { DepartmentController } from './department';
 
 assert(process.env.TOKEN_KEY);
+assert(process.env.ARGON2_SALT);
 
 class UserController {
   private static userEditableColumns(): string[] {
@@ -164,6 +165,7 @@ class UserController {
 
     argon2
       .hash(password, {
+        salt: Buffer.from(process.env.ARGON2_SALT as string, 'utf-8'),
         type: argon2.argon2id,
       })
       .then(async (hash: string) => {
