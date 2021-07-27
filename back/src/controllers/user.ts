@@ -205,7 +205,7 @@ class UserController {
             message: 'User logged',
             userId: user.id,
             token: jwt.sign(
-              { id: user.id, priviledge: user.priviledge },
+              { id: user.id, privilege: user.privilege },
               process.env.TOKEN_KEY as string,
               { expiresIn: process.env.TOKEN_DURATION },
             ),
