@@ -1,12 +1,12 @@
 CREATE TABLE Comment (
   id INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY CHECK (id > 0),
-  employeeId SMALLINT NOT NULL CHECK (employeeId > 0),
-  postId INT NOT NULL CHECK (postId > 0),
-  respondTo INT CHECK (respondTo > 0),
-  publishDate TIMESTAMPTZ NOT NULL,
-  lastModificationDate TIMESTAMPTZ,
+  employee_id SMALLINT NOT NULL CHECK (employee_id > 0),
+  post_id INT NOT NULL CHECK (post_id > 0),
+  respond_to INT CHECK (respond_to > 0),
+  publish_date TIMESTAMPTZ NOT NULL,
+  last_modification_date TIMESTAMPTZ,
   text TEXT NOT NULL,
-  FOREIGN KEY (employeeId) REFERENCES employee(id),
-  FOREIGN KEY (postId) REFERENCES Post(id),
-  FOREIGN KEY (respondTo) REFERENCES Comment(id)
+  FOREIGN KEY (employee_id) REFERENCES employee(id) ON DELETE CASCADE,
+  FOREIGN KEY (post_id) REFERENCES Post(id) ON DELETE CASCADE,
+  FOREIGN KEY (respond_to) REFERENCES Comment(id) ON DELETE CASCADE
 );

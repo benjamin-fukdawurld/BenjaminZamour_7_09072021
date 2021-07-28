@@ -1,11 +1,11 @@
 CREATE TABLE Post (
   id INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY CHECK (id > 0),
-  employeeId SMALLINT NOT NULL CHECK (employeeId > 0),
+  employee_id SMALLINT NOT NULL CHECK (employee_id > 0),
   title VARCHAR(50) NOT NULL,
-  mediaUrl VARCHAR(255),
+  media_url VARCHAR(255),
   tags VARCHAR(100),
   description TEXT,
-  publishDate TIMESTAMPTZ NOT NULL,
-  lastModificationDate TIMESTAMPTZ,
-  FOREIGN KEY (employeeId) REFERENCES Employee(id)
+  publish_date TIMESTAMPTZ NOT NULL,
+  last_modification_date TIMESTAMPTZ,
+  FOREIGN KEY (employee_id) REFERENCES Employee(id) ON DELETE CASCADE
 );

@@ -4,12 +4,14 @@ CREATE TABLE Employee (
   login VARCHAR(20) NOT NULL UNIQUE,
   password VARCHAR(150) NOT NULL,
   privilege SMALLINT NOT NULL DEFAULT 0 CHECK (privilege >= 0),
-  firstName VARCHAR(50),
-  lastName VARCHAR(50),
-  jobTitle VARCHAR(50),
-  avatarUrl VARCHAR(255),
-  birthDate DATE,
+  first_name VARCHAR(50),
+  last_name VARCHAR(50),
+  job_title VARCHAR(50),
+  avatar_url VARCHAR(255),
+  birth_date DATE,
   biography TEXT,
-  departmentId SMALLINT CHECK (departmentId > 0),
-  FOREIGN KEY (departmentId) REFERENCES Department(id)
+  department_id SMALLINT CHECK (department_id > 0),
+  FOREIGN KEY (department_id) REFERENCES Department(id) ON DELETE
+  SET
+    NULL
 );

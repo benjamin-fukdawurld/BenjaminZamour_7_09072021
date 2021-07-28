@@ -1,10 +1,10 @@
 CREATE TABLE Vote (
-    employeeId SMALLINT NOT NULL CHECK (employeeId > 0),
-    postId INT CHECK (postId > 0),
-    commentId INT CHECK (commentId > 0),
-    value SMALLINT NOT NULL,
-    PRIMARY KEY (employeeId, postId, commentId),
-    FOREIGN KEY (employeeId) REFERENCES Employee(id),
-    FOREIGN KEY (postId) REFERENCES Post(id),
-    FOREIGN KEY (commentId) REFERENCES Comment(id)
+  id INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY CHECK (id > 0),
+  employee_id SMALLINT NOT NULL CHECK (employee_id > 0),
+  post_id INT,
+  comment_id INT,
+  value SMALLINT NOT NULL,
+  FOREIGN KEY (employee_id) REFERENCES Employee(id) ON DELETE CASCADE,
+  FOREIGN KEY (post_id) REFERENCES Post(id) ON DELETE CASCADE,
+  FOREIGN KEY (comment_id) REFERENCES Comment(id) ON DELETE CASCADE
 );
