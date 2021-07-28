@@ -9,9 +9,6 @@ export default function authLevelGenerator(requiredPrivilege: number = 0) {
     try {
       const token = req.headers.authorization?.split(' ')[1];
       const { id, privilege } = jwt.verify(token ?? '', process.env.TOKEN_KEY as string) as any;
-      if (req.body.id && req.body.id !== id) {
-        throw new Error('Invalid token');
-      }
 
       if (requiredPrivilege && (!privilege || requiredPrivilege > privilege)) {
         throw new Error('Unautorized operation');
