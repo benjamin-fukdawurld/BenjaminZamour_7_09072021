@@ -68,7 +68,7 @@ class UserController {
     try {
       const user = await pool.query(
         `
-        SELECT email, login, password, privilege, firtName, lastName, jobTitle, birthDate, biography,
+        SELECT email, login, password, privilege, firstName, lastName, jobTitle, birthDate, biography,
           (SELECT name as department FROM department WHERE id = departmentId)
         FROM employee
         WHERE id = $1;
@@ -83,7 +83,7 @@ class UserController {
 
       res.status(200).send(user.rows[0]);
     } catch (err) {
-      res.status(500).send({ message: 'Unable to get this department' });
+      res.status(500).send({ message: 'Unable to get this user' });
       console.error(JSON.stringify(err));
     }
   }
@@ -186,7 +186,7 @@ class UserController {
     const { email, login, password } = req.body;
 
     const users = await pool.query(
-      `SELECT id, login, email, password FROM employee WHERE ${
+      `SELECT id, login, email, password, privilege FROM employee WHERE ${
         email ? 'email = $1' : 'login = $1'
       };`,
       [email ?? login],
