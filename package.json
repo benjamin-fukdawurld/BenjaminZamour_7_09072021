@@ -1,0 +1,29 @@
+{
+  "name": "groupomania",
+  "version": "1.0.0",
+  "description": "Projet n°7 de la formation OCR DW - Créez un réseau social d’entreprise",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "docker-compose build",
+    "build:database": "docker-compose build database",
+    "build:api": "docker-compose build api",
+    "start": "docker-compose up -d",
+    "start:database": "docker-compose up -d database",
+    "start:api": "docker-compose up -d api",
+    "stop": "docker-compose down",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benjamin-fukdawurld/BenjaminZamour_7_09072021.git"
+  },
+  "author": "Benjamin Fukdawurld",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/benjamin-fukdawurld/BenjaminZamour_7_09072021/issues"
+  },
+  "homepage": "https://github.com/benjamin-fukdawurld/BenjaminZamour_7_09072021#readme"
+}
