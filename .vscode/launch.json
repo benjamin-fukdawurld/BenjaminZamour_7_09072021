@@ -1,0 +1,31 @@
+{
+    "configurations": [
+      {
+        "name": "Docker Node.js Launch",
+        "type": "docker",
+        "request": "launch",
+        "preLaunchTask": "docker-run: debug",
+        "platform": "node",
+        "node": {
+          "package": "${workspaceFolder}/back/package.json",
+          "localRoot": "${workspaceFolder}/back",
+          "address": "groupomania",
+          "sourceMaps": true,
+          "outFiles": [
+            "${workspaceFolder}/back/dist/**/*.js",
+          ]
+        }
+      },
+      {
+        "name": "Back End Launch Locally",
+        "type": "node",
+        "request": "launch",
+        "envFile": "${workspaceFolder}/back/.env",
+        "program": "${workspaceFolder}/back/src/server.ts",
+        "preLaunchTask": "Build backend locally",
+        "outFiles": [
+          "${workspaceFolder}/back/dist/**/*.js"
+        ]
+      }
+    ]
+}
