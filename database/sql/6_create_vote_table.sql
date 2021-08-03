@@ -1,0 +1,10 @@
+CREATE TABLE Vote (
+  id INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY CHECK (id > 0),
+  employee_id SMALLINT NOT NULL CHECK (employee_id > 0),
+  post_id INT,
+  comment_id INT,
+  value SMALLINT NOT NULL,
+  FOREIGN KEY (employee_id) REFERENCES Employee(id) ON DELETE CASCADE,
+  FOREIGN KEY (post_id) REFERENCES Post(id) ON DELETE CASCADE,
+  FOREIGN KEY (comment_id) REFERENCES Comment(id) ON DELETE CASCADE
+);

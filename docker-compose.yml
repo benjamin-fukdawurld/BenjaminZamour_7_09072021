@@ -1,0 +1,59 @@
+version: "3"
+
+services:
+  database:
+    container_name: groupomania_database
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    environment:
+      PGDATA: "${PGDATA}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_PORT: "${POSTGRES_PORT}"
+      POSTGRES_CLIENTUSER: "${POSTGRES_CLIENTUSER}"
+      POSTGRES_CLIENTPASSWORD: "${POSTGRES_CLIENTPASSWORD}"
+      ARGON2_SALT: "${ARGON2_SALT}"
+      DATABASE_ADMIN_LOGIN: "${DATABASE_ADMIN_LOGIN}"
+      DATABASE_ADMIN_EMAIL: "${DATABASE_ADMIN_EMAIL}"
+      DATABASE_ADMIN_PASSWORD: "${DATABASE_ADMIN_PASSWORD}"
+    volumes:
+      - /tmp/app/database:${PGDATA}
+    expose:
+      - "${POSTGRES_PORT}"
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    networks:
+      net:
+        aliases:
+          - groupomania.db
+    restart: "unless-stopped"
+    command: -p ${POSTGRES_PORT}
+  api:
+    container_name: groupomania_api
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    environment:
+      SERVER_PORT: "${SERVER_PORT}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_HOST: "${POSTGRES_HOST}"
+      POSTGRES_PORT: "${POSTGRES_PORT}"
+      POSTGRES_CLIENTUSER: "${POSTGRES_CLIENTUSER}"
+      POSTGRES_CLIENTPASSWORD: "${POSTGRES_CLIENTPASSWORD}"
+      ARGON2_SALT: "${ARGON2_SALT}"
+      TOKEN_KEY: "${TOKEN_KEY}"
+      TOKEN_DURATION: "${TOKEN_DURATION}"
+    volumes:
+      - /tmp/app/images:/usr/app/images
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    networks:
+      net:
+        aliases:
+          - groupomania.api
+    restart: "unless-stopped"
+networks:
+  net:
+    driver: bridge

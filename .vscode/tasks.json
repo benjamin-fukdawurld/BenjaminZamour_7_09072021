@@ -1,0 +1,102 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Get database host address",
+      "type": "shell",
+      "command": "POSTGRES_HOST=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' groupomania_database)"
+    },
+    {
+      "label": "Build backend locally",
+      "type": "shell",
+      "command": "yarn",
+      "args": ["build"],
+      "problemMatcher": ["$tsc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/back"
+      },
+      "dependsOn": ["Get database host address"]
+    },
+    {
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build images",
+      "detail": "docker-compose build"
+    },
+    {
+      "type": "npm",
+      "script": "build:database",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build:database image",
+      "detail": "docker-compose build database"
+    },
+    {
+      "type": "npm",
+      "script": "build:api",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build:api image",
+      "detail": "docker-compose build api"
+    },
+    {
+      "type": "npm",
+      "script": "stop",
+      "group": "none",
+      "problemMatcher": [],
+      "label": "npm: stop images",
+      "detail": "docker-compose stop"
+    },
+    {
+      "type": "docker-build",
+      "label": "docker-build",
+      "platform": "node",
+      "dockerBuild": {
+        "dockerfile": "${workspaceFolder}/back/Dockerfile",
+        "context": "${workspaceFolder}/back",
+        "pull": true
+      },
+      "node": {
+        "package": "${workspaceFolder}/back/package.json"
+      }
+    },
+    {
+      "type": "docker-run",
+      "label": "docker-run: release",
+      "dependsOn": ["docker-build"],
+      "platform": "node",
+      "node": {
+        "package": "${workspaceFolder}/back/package.json"
+      }
+    },
+    {
+      "type": "docker-run",
+      "label": "docker-run: debug",
+      "dependsOn": ["docker-build"],
+      "dockerRun": {
+        "env": {
+          "DEBUG": "*",
+          "NODE_ENV": "development"
+        },
+        "envFiles": ["${workspaceFolder}/.env"],
+        "ports": [
+          {
+            "containerPort": 5000,
+            "hostPort": 5000,
+            "protocol": "tcp"
+          }
+        ]
+      },
+      "node": {
+        "package": "${workspaceFolder}/back/package.json",
+        "enableDebugging": true
+      }
+    }
+  ]
+}

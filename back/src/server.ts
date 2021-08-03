@@ -1,10 +1,16 @@
-import dotenv from 'dotenv';
-import https from 'https';
-import fs from 'fs';
+import './config';
+
+import http from 'http';
 
 import { createApp } from './app';
 
-dotenv.config();
+import logger from './common/logger';
+
+import department from './routes/department';
+import user from './routes/user';
+import post from './routes/post';
+import comment from './routes/comment';
+import vote from './routes/vote';
 
 function normalizePort(port: string | number): number {
   let value = 0;
@@ -23,12 +29,32 @@ function normalizePort(port: string | number): number {
 
 const port = normalizePort(process.env.SERVER_PORT ?? 5000);
 
-const options = {
-  key: fs.readFileSync(process.env.HTTPS_KEY ?? 'key.pem'),
-  cert: fs.readFileSync(process.env.HTTPS_CERTIFICATE ?? 'cert.pem'),
-};
-
-const server = https.createServer(options, createApp({}));
+const server = http.createServer(
+  createApp({
+    routes: [
+      {
+        path: '/departments',
+        router: department,
+      },
+      {
+        path: '/users',
+        router: user,
+      },
+      {
+        path: '/posts',
+        router: post,
+      },
+      {
+        path: '/comments',
+        router: comment,
+      },
+      {
+        path: '/votes',
+        router: vote,
+      },
+    ],
+  }),
+);
 
 server.on('error', (error: Error | any) => {
   if (error.syscall && error.syscall !== 'listen') {
@@ -39,11 +65,11 @@ server.on('error', (error: Error | any) => {
   const bind = typeof address === 'string' ? `pipe ${address}` : `port: ${port}`;
   switch (error.code) {
     case 'EACCES':
-      console.error(`${bind} requires elevated privileges.`);
+      logger.error(`${bind} requires elevated privileges.`);
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(`${bind} is already in use.`);
+      logger.error(`${bind} is already in use.`);
       process.exit(1);
       break;
     default:
@@ -54,7 +80,7 @@ server.on('error', (error: Error | any) => {
 server.on('listening', async () => {
   const address = server.address();
   const bind = typeof address === 'string' ? `pipe ${address}` : `port: ${port}`;
-  console.log(`Listening on ${bind}`);
+  logger.info(`Listening on ${bind}`);
 });
 
 server.listen(port);
