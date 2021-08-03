@@ -14,6 +14,7 @@
     "start:database": "docker-compose up -d database",
     "start:api": "docker-compose up -d api",
     "stop": "docker-compose down",
+    "database:ip": "docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' groupomania_database",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
