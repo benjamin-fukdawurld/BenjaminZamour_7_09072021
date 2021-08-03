@@ -1,23 +1,25 @@
 {
-	"version": "2.0.0",
-	"tasks": [
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Get database host address",
+      "type": "shell",
+      "command": "POSTGRES_HOST=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' groupomania_database)"
+    },
     {
       "label": "Build backend locally",
-      "type": "process",
+      "type": "shell",
       "command": "yarn",
-      "args": [
-        "build",
-      ],
-      "problemMatcher": [
-          "$tsc"
-      ],
+      "args": ["build"],
+      "problemMatcher": ["$tsc"],
       "group": {
-          "kind": "build",
-          "isDefault": true
+        "kind": "build",
+        "isDefault": true
       },
       "options": {
         "cwd": "${workspaceFolder}/back"
-      }
+      },
+      "dependsOn": ["Get database host address"]
     },
     {
       "type": "npm",
@@ -52,22 +54,6 @@
       "detail": "docker-compose stop"
     },
     {
-      "type": "npm",
-      "script": "stop:database",
-      "group": "none",
-      "problemMatcher": [],
-      "label": "npm: stop:database image",
-      "detail": "docker-compose stop database"
-    },
-    {
-      "type": "npm",
-      "script": "stop:api",
-      "group": "none",
-      "problemMatcher": [],
-      "label": "npm: stop:api image",
-      "detail": "docker-compose stop api"
-    },
-    {
       "type": "docker-build",
       "label": "docker-build",
       "platform": "node",
@@ -83,9 +69,7 @@
     {
       "type": "docker-run",
       "label": "docker-run: release",
-      "dependsOn": [
-        "docker-build"
-      ],
+      "dependsOn": ["docker-build"],
       "platform": "node",
       "node": {
         "package": "${workspaceFolder}/back/package.json"
@@ -94,17 +78,13 @@
     {
       "type": "docker-run",
       "label": "docker-run: debug",
-      "dependsOn": [
-        "docker-build"
-      ],
+      "dependsOn": ["docker-build"],
       "dockerRun": {
         "env": {
           "DEBUG": "*",
           "NODE_ENV": "development"
         },
-        "envFiles": [
-          "${workspaceFolder}/.env"
-        ],
+        "envFiles": ["${workspaceFolder}/.env"],
         "ports": [
           {
             "containerPort": 5000,
