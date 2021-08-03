@@ -19,7 +19,7 @@ services:
       DATABASE_ADMIN_EMAIL: "${DATABASE_ADMIN_EMAIL}"
       DATABASE_ADMIN_PASSWORD: "${DATABASE_ADMIN_PASSWORD}"
     volumes:
-      - ./app/database:${PGDATA}
+      - /tmp/app/database:${PGDATA}
     expose:
       - "${POSTGRES_PORT}"
     ports:
@@ -46,7 +46,7 @@ services:
       TOKEN_KEY: "${TOKEN_KEY}"
       TOKEN_DURATION: "${TOKEN_DURATION}"
     volumes:
-      - ./app/images:/usr/app/images
+      - /tmp/app/images:/usr/app/images
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     networks:
