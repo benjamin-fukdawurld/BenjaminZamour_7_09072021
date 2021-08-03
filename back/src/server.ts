@@ -4,9 +4,13 @@ import http from 'http';
 
 import { createApp } from './app';
 
+import logger from './common/logger';
+
 import department from './routes/department';
 import user from './routes/user';
 import post from './routes/post';
+import comment from './routes/comment';
+import vote from './routes/vote';
 
 function normalizePort(port: string | number): number {
   let value = 0;
@@ -40,6 +44,14 @@ const server = http.createServer(
         path: '/posts',
         router: post,
       },
+      {
+        path: '/comments',
+        router: comment,
+      },
+      {
+        path: '/votes',
+        router: vote,
+      },
     ],
   }),
 );
@@ -53,11 +65,11 @@ server.on('error', (error: Error | any) => {
   const bind = typeof address === 'string' ? `pipe ${address}` : `port: ${port}`;
   switch (error.code) {
     case 'EACCES':
-      console.error(`${bind} requires elevated privileges.`);
+      logger.error(`${bind} requires elevated privileges.`);
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(`${bind} is already in use.`);
+      logger.error(`${bind} is already in use.`);
       process.exit(1);
       break;
     default:
@@ -68,7 +80,7 @@ server.on('error', (error: Error | any) => {
 server.on('listening', async () => {
   const address = server.address();
   const bind = typeof address === 'string' ? `pipe ${address}` : `port: ${port}`;
-  console.log(`Listening on ${bind}`);
+  logger.info(`Listening on ${bind}`);
 });
 
 server.listen(port);
