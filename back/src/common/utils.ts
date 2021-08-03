@@ -23,4 +23,17 @@ function getMediaUrl(req: Request): string | null {
   return `${req.protocol}://${req.get('host')}/medias/${req.file.filename}`;
 }
 
-export default { deleteMediaIfExists, getMediaUrl };
+function capitalizeText(text: string): string {
+  return text
+    .trim()
+    .replace(/ +/g, ' ')
+    .split(' ')
+    .map((s: string): string => s.charAt(0).toUpperCase() + s.substring(1))
+    .join(' ');
+}
+
+function deepCopy(object: any): any {
+  return JSON.parse(JSON.stringify(object));
+}
+
+export default { deleteMediaIfExists, getMediaUrl, capitalizeText, deepCopy };
