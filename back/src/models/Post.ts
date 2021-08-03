@@ -1,9 +1,9 @@
 export interface Post {
   id?: number;
-  employeeId: number;
-  title: string;
+  employeeId?: number;
+  title?: string;
   mediaUrl?: string;
-  tags: string[];
+  tags?: string;
   description?: string;
   publishDate?: Date;
   lastModificationDate?: Date;
