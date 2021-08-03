@@ -9,5 +9,6 @@ export interface User {
   birthDate?: Date;
   biography?: string;
   departmentId?: number;
+  departmentName?: string;
   privilege?: number;
 }
