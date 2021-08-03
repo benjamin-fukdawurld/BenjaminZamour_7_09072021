@@ -1,10 +1,11 @@
 import { Post } from '../models/Post';
 import dao from '../dao/PostDao';
 import ServiceResponse from '../common/ServiceResponse';
+import { QueryOptions } from '../database';
 
 export default {
-  async getPosts(filters?: any): Promise<ServiceResponse<Post[]>> {
-    return { status: 200, result: await dao.getPosts(filters) };
+  async getPosts(options?: QueryOptions): Promise<ServiceResponse<Post[]>> {
+    return { status: 200, result: await dao.getPosts(options) };
   },
 
   async getPost(id: number): Promise<ServiceResponse<Post>> {

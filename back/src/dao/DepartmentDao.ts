@@ -1,11 +1,24 @@
 import { Department } from '../models/Department';
-import { knexDb } from '../database';
+import { knexDb, QueryOptions } from '../database';
 
 export default {
-  async getDepartments(filters?: any): Promise<Department[]> {
+  async getDepartments(options?: QueryOptions): Promise<Department[]> {
     const departments = knexDb.select().from<Department>('department');
-    if (filters) {
-      departments.where(filters);
+
+    if (options?.filters) {
+      departments.where(options.filters);
+    }
+
+    if (options?.limit) {
+      departments.limit(options.limit);
+    }
+
+    if (options?.offset) {
+      departments.offset(options.offset);
+    }
+
+    if (options?.orderBy) {
+      departments.orderBy(options.orderBy);
     }
 
     return departments;

@@ -6,6 +6,7 @@ import dao from '../dao/UserDao';
 import ServiceResponse from '../common/ServiceResponse';
 import utils from '../common/utils';
 import DepartmentDao from '../dao/DepartmentDao';
+import { QueryOptions } from '../database';
 
 async function userLoginOrEmailExists(user: User): Promise<boolean> {
   const existingUsers = await dao.getUsers({
@@ -22,8 +23,8 @@ async function userLoginOrEmailExists(user: User): Promise<boolean> {
   return existingUsers.length > 0;
 }
 
-async function getUsers(filters?: any): Promise<ServiceResponse<User[]>> {
-  return { status: 200, result: await dao.getUsers({ filters }) };
+async function getUsers(options?: QueryOptions): Promise<ServiceResponse<User[]>> {
+  return { status: 200, result: await dao.getUsers(options) };
 }
 
 async function getUser(id: number): Promise<ServiceResponse<User>> {
@@ -80,7 +81,9 @@ async function updateUser(id: number, user: User): Promise<ServiceResponse<User[
   const userCopy = utils.deepCopy(user);
   delete userCopy.id;
   if (userCopy.departmentName && !userCopy.departmentId) {
-    const department = await DepartmentDao.getDepartments({ name: userCopy.departmentName });
+    const department = await DepartmentDao.getDepartments({
+      filters: { name: userCopy.departmentName },
+    });
     if (department?.length !== 1) {
       return {
         status: 404,

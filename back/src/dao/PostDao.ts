@@ -1,14 +1,27 @@
 import { Post } from '../models/Post';
-import { knexDb } from '../database';
+import { knexDb, QueryOptions } from '../database';
 
 export default {
-  async getPosts(filters?: any): Promise<Post[]> {
+  async getPosts(options?: QueryOptions): Promise<Post[]> {
     const posts = knexDb
       .select(knexDb.raw('post.*, employee.login, employee.avatar_url'))
       .from<Post>('post')
       .leftJoin('employee', 'post.employee_id', 'employee.id');
-    if (filters) {
-      posts.where(filters);
+
+    if (options?.filters) {
+      posts.where(options.filters);
+    }
+
+    if (options?.limit) {
+      posts.limit(options.limit);
+    }
+
+    if (options?.offset) {
+      posts.offset(options.offset);
+    }
+
+    if (options?.orderBy) {
+      posts.orderBy(options.orderBy);
     }
 
     return posts;

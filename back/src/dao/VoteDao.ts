@@ -1,11 +1,24 @@
 import { Vote } from '../models/Vote';
-import { knexDb } from '../database';
+import { knexDb, QueryOptions } from '../database';
 
 export default {
-  async getVotes(filters?: any): Promise<Vote[]> {
+  async getVotes(options?: QueryOptions): Promise<Vote[]> {
     const votes = knexDb.select().from<Vote>('vote');
-    if (filters) {
-      votes.where(filters);
+
+    if (options?.filters) {
+      votes.where(options.filters);
+    }
+
+    if (options?.limit) {
+      votes.limit(options.limit);
+    }
+
+    if (options?.offset) {
+      votes.offset(options.offset);
+    }
+
+    if (options?.orderBy) {
+      votes.orderBy(options.orderBy);
     }
 
     return votes;

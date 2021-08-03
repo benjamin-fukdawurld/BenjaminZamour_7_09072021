@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import service from '../services/DepartmentService';
 import logger from '../common/logger';
+import { parseQueryOptions } from '../database';
 
 export class DepartmentController {
   public async getDepartments(req: Request, res: Response) {
     try {
-      const serviceResponse = await service.getDepartments();
+      const serviceResponse = await service.getDepartments(parseQueryOptions(req.query));
       res.status(serviceResponse.status).send(serviceResponse.result);
     } catch (err) {
       res.status(500).send(err);

@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import service from '../services/CommentService';
 import logger from '../common/logger';
+import { parseQueryOptions } from '../database';
 
 export class CommentController {
   public async getComments(req: Request, res: Response) {
     const { employeeId, postId, respondTo } = req.query;
 
-    const filter =
+    const filters =
       !!employeeId || !!postId || !!respondTo
         ? (query: any) => {
             if (employeeId) {
@@ -23,8 +24,10 @@ export class CommentController {
           }
         : undefined;
 
+    const { limit, offset, orderBy } = parseQueryOptions(req.query);
+
     try {
-      const serviceResponse = await service.getComments(filter);
+      const serviceResponse = await service.getComments({ filters, limit, offset, orderBy });
       res.status(serviceResponse.status).send(serviceResponse.result);
     } catch (err) {
       res.status(500).send({ message: 'Unable to get comment list' });

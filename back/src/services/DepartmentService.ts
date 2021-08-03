@@ -2,10 +2,11 @@ import { Department } from '../models/Department';
 import dao from '../dao/DepartmentDao';
 import ServiceResponse from '../common/ServiceResponse';
 import utils from '../common/utils';
+import { QueryOptions } from '../database';
 
 export default {
-  async getDepartments(filters?: any): Promise<ServiceResponse<Department[]>> {
-    return { status: 200, result: await dao.getDepartments(filters) };
+  async getDepartments(options?: QueryOptions): Promise<ServiceResponse<Department[]>> {
+    return { status: 200, result: await dao.getDepartments(options) };
   },
 
   async getDepartment(id: number): Promise<ServiceResponse<Department>> {
@@ -21,7 +22,7 @@ export default {
   async createDepartment(department: Department): Promise<ServiceResponse<Department>> {
     const name = utils.capitalizeText(department.name);
 
-    if ((await dao.getDepartments({ name })).length > 0) {
+    if ((await dao.getDepartments({ filters: { name } })).length > 0) {
       return { status: 400, result: { message: `Department '${name}' already exists` } };
     }
 
@@ -42,7 +43,7 @@ export default {
       return { status: 404, result: { message: `department '${id}' not found` } };
     }
 
-    if ((await dao.getDepartments({ name })).length > 0) {
+    if ((await dao.getDepartments({ filters: { name } })).length > 0) {
       return { status: 400, result: { message: `department '${name}' already exists` } };
     }
 

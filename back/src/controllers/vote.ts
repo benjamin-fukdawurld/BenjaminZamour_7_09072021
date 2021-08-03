@@ -2,11 +2,12 @@ import { Request, Response } from 'express';
 import service from '../services/VoteService';
 import { Vote } from '../models/Vote';
 import logger from '../common/logger';
+import { parseQueryOptions } from '../database';
 
 export class VoteController {
   public async getVotes(req: Request, res: Response) {
     try {
-      const serviceResponse = await service.getVotes();
+      const serviceResponse = await service.getVotes(parseQueryOptions(req.query));
       res.status(serviceResponse.status).send(serviceResponse.result);
     } catch (err) {
       res.status(500).send({ message: 'Unable to get vote list' });

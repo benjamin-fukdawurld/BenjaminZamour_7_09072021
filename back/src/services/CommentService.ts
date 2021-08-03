@@ -1,10 +1,11 @@
 import { Comment } from '../models/Comment';
 import dao from '../dao/CommentDao';
 import ServiceResponse from '../common/ServiceResponse';
+import { QueryOptions } from '../database';
 
 export default {
-  async getComments(filters?: any): Promise<ServiceResponse<Comment[]>> {
-    return { status: 200, result: await dao.getComments(filters) };
+  async getComments(options?: QueryOptions): Promise<ServiceResponse<Comment[]>> {
+    return { status: 200, result: await dao.getComments(options) };
   },
 
   async getComment(id: number): Promise<ServiceResponse<Comment>> {

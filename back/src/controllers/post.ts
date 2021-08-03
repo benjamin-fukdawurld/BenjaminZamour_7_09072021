@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import service from '../services/PostService';
 import utils from '../common/utils';
 import logger from '../common/logger';
+import { parseQueryOptions } from '../database';
 
 class PostController {
   private static postEditableColumns = ['employeeId', 'title', 'mediaUrl', 'tags', 'description'];
@@ -20,7 +21,7 @@ class PostController {
 
   public async getPosts(req: Request, res: Response) {
     try {
-      const serviceResponse = await service.getPosts();
+      const serviceResponse = await service.getPosts(parseQueryOptions(req.query));
       res.status(serviceResponse.status).send(serviceResponse.result);
     } catch (err) {
       res.status(500).send({ message: 'Unable to get post list' });

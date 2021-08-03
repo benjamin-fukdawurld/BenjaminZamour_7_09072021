@@ -1,5 +1,6 @@
 import { User } from '../models/User';
-import { knexDb } from '../database';
+import { knexDb, QueryOptions } from '../database';
+import logger from '../common/logger';
 
 function getSelectedColumnsString(columns?: string[]): string {
   let selectedColumns: string[] = [];
@@ -16,13 +17,26 @@ function getSelectedColumnsString(columns?: string[]): string {
 }
 
 export default {
-  async getUsers({ columns, filters }: { columns?: string[]; filters?: any }): Promise<User[]> {
+  async getUsers(options?: QueryOptions): Promise<User[]> {
     const users = knexDb
-      .select(knexDb.raw(getSelectedColumnsString(columns)))
+      .select(knexDb.raw(getSelectedColumnsString(options?.columns)))
       .from<User>('employee')
       .leftJoin('department', 'employee.departmentId', 'department.id');
-    if (filters) {
-      users.where(filters);
+
+    if (options?.filters) {
+      users.where(options.filters);
+    }
+
+    if (options?.limit) {
+      users.limit(options.limit);
+    }
+
+    if (options?.offset) {
+      users.offset(options.offset);
+    }
+
+    if (options?.orderBy) {
+      users.orderBy(options.orderBy);
     }
 
     return users;

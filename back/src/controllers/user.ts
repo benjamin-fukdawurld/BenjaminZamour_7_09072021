@@ -5,6 +5,7 @@ import assert from 'assert';
 import { User } from '../models/User';
 import logger from '../common/logger';
 import service from '../services/UserService';
+import { parseQueryOptions } from '../database';
 
 assert(process.env.TOKEN_KEY);
 assert(process.env.ARGON2_SALT);
@@ -12,7 +13,7 @@ assert(process.env.ARGON2_SALT);
 class UserController {
   public async getUsers(req: Request, res: Response) {
     try {
-      const serviceResponse = await service.getUsers();
+      const serviceResponse = await service.getUsers(parseQueryOptions(req.query));
       res.status(serviceResponse.status).send(serviceResponse.result);
     } catch (err) {
       res.status(500).send({ message: 'Unable to get user list' });

@@ -35,4 +35,45 @@ const knexDb = knex({
   debug: process.env.NODE_ENV !== 'production',
 });
 
-export { knexDb };
+interface OrderByOptions {
+  column: string;
+  order?: 'asc' | 'desc';
+}
+
+function parseOrderOptions(orderBy?: string): OrderByOptions[] | undefined {
+  return orderBy?.split(',').map((field: string): OrderByOptions => {
+    const [column, dir] = field.split(' ');
+    let order: 'asc' | 'desc' | undefined;
+    if (dir) {
+      if (dir === 'a') {
+        order = 'asc';
+      } else if (dir === 'd') {
+        order = 'desc';
+      }
+    }
+
+    return {
+      column,
+      order,
+    };
+  });
+}
+
+interface QueryOptions {
+  columns?: string[];
+  filters?: any;
+  limit?: number;
+  offset?: number;
+  orderBy?: OrderByOptions[];
+}
+
+function parseQueryOptions(query: any): QueryOptions {
+  const { limit, offset, orderBy } = query;
+  return {
+    limit: limit ? parseFloat(limit as string) : undefined,
+    offset: offset ? parseFloat(offset as string) : undefined,
+    orderBy: parseOrderOptions(orderBy as string | undefined),
+  };
+}
+
+export { knexDb, OrderByOptions, QueryOptions, parseOrderOptions, parseQueryOptions };
