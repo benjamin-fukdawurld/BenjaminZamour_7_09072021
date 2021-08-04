@@ -94,7 +94,7 @@ class UserController {
 
       setTimeout(() => res.status(serviceResponse.status).send(serviceResponse.result), 3000);
     } catch (err) {
-      res.status(500).send({ message: 'Unable to delete this user' });
+      res.status(500).send({ message: 'Unable to log this user' });
       logger.error(JSON.stringify(err));
     }
   }

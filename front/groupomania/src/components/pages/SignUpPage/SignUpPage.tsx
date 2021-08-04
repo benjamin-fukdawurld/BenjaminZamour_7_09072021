@@ -1,9 +1,10 @@
 import SignUpForm from "../../SignUpForm";
+import Main from "../../Main";
 
 export default function SignUpPage(props: any) {
   return (
-    <main className="container mx-auto">
+    <Main>
       <SignUpForm />
-    </main>
+    </Main>
   );
 }

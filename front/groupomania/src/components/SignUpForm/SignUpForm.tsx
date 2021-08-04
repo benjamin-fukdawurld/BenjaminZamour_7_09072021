@@ -1,8 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import Alert from "react-bootstrap/Alert";
+//import { Link } from "react-router-dom";
 
 import {
   getEmailErrors,
@@ -196,9 +193,10 @@ export default class SignUpForm extends Component<{}, SignUpFormState> {
   }
 
   render() {
-    return (
-      <React.Fragment>
-        <Form
+    return <React.Fragment></React.Fragment>;
+
+    /*
+      <Form
           className="w-50 mx-auto d-flex flex-column justify-content-center align-items-center"
           onSubmit={this.handleSubmit}
         >
@@ -289,7 +287,6 @@ export default class SignUpForm extends Component<{}, SignUpFormState> {
             {this.state.alert.message}
           </Alert>
         )}
-      </React.Fragment>
-    );
+    */
   }
 }

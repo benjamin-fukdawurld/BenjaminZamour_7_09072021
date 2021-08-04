@@ -4,16 +4,31 @@ import SignUpPage from "./components/pages/SignUpPage";
 import SignInPage from "./components/pages/SignInPage";
 
 import Header from "./components/Header";
-import HomPage from "./components/pages/HomePage";
+import HomePage from "./components/pages/HomePage";
 
 class App extends Component {
   render() {
+    const pages = [
+      {
+        path: "/signup",
+        component: SignUpPage,
+      },
+      {
+        path: "/signin",
+        component: SignInPage,
+      },
+      {
+        path: "/",
+        component: HomePage,
+      },
+    ];
+
     return (
       <React.Fragment>
         <Header />
-        <Route exact path="/signup" component={SignUpPage} />
-        <Route exact path="/signin" component={SignInPage} />
-        <Route exact path="/" component={HomPage} />
+        {pages.map((page) => (
+          <Route exact {...page} key={page.path} />
+        ))}
       </React.Fragment>
     );
   }

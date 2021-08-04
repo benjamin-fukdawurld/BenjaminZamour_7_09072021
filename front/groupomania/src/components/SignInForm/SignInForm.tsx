@@ -1,13 +1,6 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import Alert from "react-bootstrap/Alert";
-import {
-  checkEmail,
-  getLoginErrors,
-  getPasswordErrors,
-} from "../../common/utils";
+//import { Link } from "react-router-dom";
+import { checkEmail, getLoginErrors } from "../../common/utils";
 import axios from "axios";
 
 interface SignInFormState {
@@ -138,9 +131,10 @@ export default class SignInForm extends Component<any, SignInFormState> {
   }
 
   render() {
-    return (
-      <React.Fragment>
-        <Form
+    return <React.Fragment></React.Fragment>;
+
+    /*
+    <Form
           className="w-50 mb-3 mx-auto d-flex flex-column justify-content-center align-items-center"
           onSubmit={this.handleSubmit}
         >
@@ -190,7 +184,6 @@ export default class SignInForm extends Component<any, SignInFormState> {
             {this.state.alert.message}
           </Alert>
         )}
-      </React.Fragment>
-    );
+    */
   }
 }

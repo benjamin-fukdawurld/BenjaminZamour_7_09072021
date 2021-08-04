@@ -1,5 +1,4 @@
 import { Component } from "react";
-import Badge from "react-bootstrap/Badge";
 
 export interface PostProps {
   id: number;
@@ -31,11 +30,7 @@ export default class Post extends Component<PostProps, PostState> {
         )}
         <div className="post__tags">
           {this.props.tags.map((tag: string, index: number) => {
-            return (
-              <Badge bg="primary" className="mx-1" key={index}>
-                {tag}
-              </Badge>
-            );
+            return <div key={index}>{tag}</div>;
           })}
         </div>
       </article>

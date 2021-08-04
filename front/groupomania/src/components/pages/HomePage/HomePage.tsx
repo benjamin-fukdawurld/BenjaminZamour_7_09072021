@@ -3,6 +3,7 @@ import { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { getAuthData } from "../../../common/auth";
 import Post, { PostProps } from "../../Post";
+import Main from "../../Main";
 
 interface HomePageState {
   posts: PostProps[];
@@ -49,11 +50,11 @@ export default class HomPage extends Component<{}, HomePageState> {
       const authData = getAuthData();
       if (authData?.userId) {
         return (
-          <main className="d-flex flex-col justify-content-evenly align-items-center w-75 mx-auto">
+          <Main>
             {this.state.posts.map((post: PostProps) => (
               <Post key={post.id} {...post} />
             ))}
-          </main>
+          </Main>
         );
       }
     }
