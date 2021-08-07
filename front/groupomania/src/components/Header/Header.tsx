@@ -1,26 +1,29 @@
 import React from "react";
-import { getAuthData } from "../../common/auth";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
 
+import { getAuthData } from "../../common/auth";
 import UserArea from "./UserArea";
 import Logo from "./Logo";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  root: {},
+
+  colorDefault: {
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backdropFilter: "blur(12px)",
+  },
+}));
 
 export default function Header(props: any) {
+  const classes = useStyles();
   return (
-    <header
-      className="
-      bg-red-700
-      text-white
-        flex
-        flex-row
-        items-center
-        justify-between
-        shadow-lg
-        px-4 py-2
-        mb-4
-      "
-    >
-      <Logo />
-      <UserArea authData={getAuthData()} />
-    </header>
+    <AppBar classes={classes} color="default">
+      <Toolbar>
+        <Logo />
+        <UserArea authData={getAuthData()} />
+      </Toolbar>
+    </AppBar>
   );
 }

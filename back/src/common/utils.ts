@@ -20,7 +20,7 @@ function getMediaUrl(req: Request): string | null {
   if (!req.file) {
     return null;
   }
-  return `${req.protocol}://${req.get('host')}/medias/${req.file.filename}`;
+  return `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
 }
 
 function capitalizeText(text: string): string {

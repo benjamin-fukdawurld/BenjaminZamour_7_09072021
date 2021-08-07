@@ -1,12 +1,18 @@
 import React, { Component } from "react";
-//import { Link } from "react-router-dom";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 import {
   getEmailErrors,
   getLoginErrors,
   getPasswordErrors,
-} from "../../common/utils";
-import axios from "axios";
+} from "../../../../common/utils";
+
+import Form from "../../../common/Form";
+
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import { logIn } from "../../../../common/auth";
 
 interface SignUpFormState {
   values: {
@@ -16,10 +22,10 @@ interface SignUpFormState {
     confirmPassword: string;
   };
   errors: {
-    email?: string;
-    login?: string;
-    password?: string;
-    confirmPassword?: string;
+    email: string | null;
+    login: string | null;
+    password: string | null;
+    confirmPassword: string | null;
   };
   touched: {
     email: boolean;
@@ -112,17 +118,11 @@ export default class SignUpForm extends Component<{}, SignUpFormState> {
     axios
       .post("http://localhost:5000/users/signup", { login, email, password })
       .then((res) =>
-        axios
-          .post("http://localhost:5000/users/login", { login, password })
-          .then((res: any) => {
-            localStorage.setItem(
-              "groupomania_auth",
-              JSON.stringify({ userId: res.data.userId, token: res.data.token })
-            );
-            const { values, errors, touched } = this.state;
-            this.setState({ values, errors, touched });
-            window.location.href = "/";
-          })
+        logIn({ login, password }).then((res: any) => {
+          const { values, errors, touched } = this.state;
+          this.setState({ values, errors, touched });
+          window.location.href = "/";
+        })
       )
       .catch((err) => {
         console.error(err);
@@ -136,7 +136,7 @@ export default class SignUpForm extends Component<{}, SignUpFormState> {
     const loginError = getLoginErrors(login);
     let errors = this.state.errors;
     if (!loginError) {
-      delete errors.login;
+      errors.login = null;
     } else {
       errors.login = loginError;
     }
@@ -150,7 +150,7 @@ export default class SignUpForm extends Component<{}, SignUpFormState> {
     const emailError = getEmailErrors(email);
     let errors = this.state.errors;
     if (!emailError) {
-      delete errors.email;
+      errors.email = null;
     } else {
       errors.email = emailError;
     }
@@ -165,9 +165,9 @@ export default class SignUpForm extends Component<{}, SignUpFormState> {
     let errors = this.state.errors;
     if (!passwordError) {
       if (!isConfirm) {
-        delete errors.password;
+        errors.password = null;
       } else {
-        delete errors.confirmPassword;
+        errors.confirmPassword = null;
       }
     } else {
       if (!isConfirm) {
@@ -193,100 +193,88 @@ export default class SignUpForm extends Component<{}, SignUpFormState> {
   }
 
   render() {
-    return <React.Fragment></React.Fragment>;
-
-    /*
-      <Form
-          className="w-50 mx-auto d-flex flex-column justify-content-center align-items-center"
-          onSubmit={this.handleSubmit}
-        >
-          <Form.Group className="w-100 mb-3" controlId="formBasicEmail">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="adresse email"
-              value={this.state.values.email}
-              isValid={!this.state.errors.email && this.state.touched.email}
-              isInvalid={this.state.touched.email && !!this.state.errors.email}
-              onChange={this.handleEmailChange}
-            />
-            <Form.Control.Feedback type="invalid" tooltip>
-              {this.state.errors.email}
-            </Form.Control.Feedback>
-          </Form.Group>
-
-          <Form.Group className="w-100 mb-3" controlId="formBasicLogin">
-            <Form.Label>pseudonyme</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="choisissez un pseudo"
+    return (
+      <React.Fragment>
+        <Form onSubmit={this.handleSubmit} className="w-full max-w-sm">
+          <div className={["flex", "flex-col", "items-center"].join(" ")}>
+            <TextField
+              required
+              className="w-5/6"
+              label="Pseudonyme"
               value={this.state.values.login}
-              isValid={!this.state.errors.login && this.state.touched.login}
-              isInvalid={this.state.touched.login && !!this.state.errors.login}
               onChange={this.handleLoginChange}
+              error={!!this.state.errors.login && this.state.touched.login}
+              helperText={this.state.touched.login && this.state.errors.login}
+              placeholder="Pseudonyme"
             />
-            <Form.Control.Feedback type="invalid" tooltip>
-              {this.state.errors.login}
-            </Form.Control.Feedback>
-          </Form.Group>
-
-          <Form.Group className="w-100 mb-3" controlId="formBasicPassword">
-            <Form.Label>Mot de passe</Form.Label>
-            <Form.Control
+            <TextField
+              required
+              className="w-5/6"
+              label="Email"
+              value={this.state.values.email}
+              onChange={this.handleEmailChange}
+              error={!!this.state.errors.email && this.state.touched.email}
+              helperText={this.state.touched.email && this.state.errors.email}
+              placeholder="Email"
+            />
+            <TextField
+              required
+              className="w-5/6"
               type="password"
-              placeholder="Mot de passe"
+              label="Mot de passe"
               value={this.state.values.password}
-              isValid={
-                !this.state.errors.password && this.state.touched.password
-              }
-              isInvalid={
-                this.state.touched.password && !!this.state.errors.password
-              }
               onChange={this.handlePasswordChange}
+              error={
+                !!this.state.errors.password && this.state.touched.password
+              }
+              helperText={
+                this.state.touched.password && this.state.errors.password
+              }
+              placeholder="mot de passe"
             />
-            <Form.Control.Feedback type="invalid" tooltip>
-              {this.state.errors.password}
-            </Form.Control.Feedback>
-          </Form.Group>
-
-          <Form.Group
-            className="w-100 mb-3"
-            controlId="formBasicConfirmPassword"
-          >
-            <Form.Label>Confirmer le mot de passe</Form.Label>
-            <Form.Control
+            <TextField
+              required
+              className="w-5/6"
               type="password"
-              placeholder="Confirmer mot de passe"
+              label="Confirmer mot de passe"
               value={this.state.values.confirmPassword}
-              isValid={
-                !this.state.errors.confirmPassword &&
+              onChange={this.handlePasswordChange}
+              error={
+                !!this.state.errors.confirmPassword &&
                 this.state.touched.confirmPassword
               }
-              isInvalid={
+              helperText={
                 this.state.touched.confirmPassword &&
-                !!this.state.errors.confirmPassword
+                this.state.errors.confirmPassword
               }
-              onChange={this.handleConfirmPasswordChange}
+              placeholder="Mot de passe"
             />
-            <Form.Control.Feedback type="invalid" tooltip>
-              {this.state.errors.confirmPassword}
-            </Form.Control.Feedback>
-          </Form.Group>
-
+          </div>
           <div>
-            <Button variant="primary" type="submit" disabled={!this.isValid}>
-              S'inscrire
-            </Button>
-            <Link to="/signin">
-              <Button variant="link">Se connecter</Button>
-            </Link>
+            <div className="w-full mt-4 flex justify-evenly items-center">
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="small"
+                disabled={!this.isValid}
+              >
+                S'incrire
+              </Button>
+              <Link to="/signin">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  component="div"
+                  size="small"
+                >
+                  Connexion
+                </Button>
+              </Link>
+            </div>
           </div>
         </Form>
-        {!!this.state.alert && (
-          <Alert variant={this.state.alert.variant}>
-            {this.state.alert.message}
-          </Alert>
-        )}
-    */
+      </React.Fragment>
+    );
   }
 }

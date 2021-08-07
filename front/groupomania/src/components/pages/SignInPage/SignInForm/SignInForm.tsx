@@ -1,7 +1,12 @@
 import React, { Component } from "react";
-//import { Link } from "react-router-dom";
-import { checkEmail, getLoginErrors } from "../../common/utils";
-import axios from "axios";
+import { Link } from "react-router-dom";
+import { checkEmail, getLoginErrors } from "../../../../common/utils";
+
+import Form from "../../../common/Form";
+
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import { logIn } from "../../../../common/auth";
 
 interface SignInFormState {
   values: {
@@ -9,8 +14,8 @@ interface SignInFormState {
     password: string;
   };
   errors: {
-    login?: string;
-    password?: string;
+    login: string | null;
+    password: string | null;
   };
   touched: {
     login: boolean;
@@ -37,6 +42,7 @@ export default class SignInForm extends Component<any, SignInFormState> {
       },
       errors: {
         login: "Pseudonyme invalide",
+        password: "Mot de passe invalide",
       },
       touched: {
         login: false,
@@ -76,13 +82,8 @@ export default class SignInForm extends Component<any, SignInFormState> {
 
     data.password = this.state.values.password;
 
-    axios
-      .post("http://localhost:5000/users/login", data)
+    logIn(data)
       .then((res: any) => {
-        localStorage.setItem(
-          "groupomania_auth",
-          JSON.stringify({ userId: res.data.userId, token: res.data.token })
-        );
         const { values, errors, touched } = this.state;
         this.setState({ values, errors, touched });
         window.location.href = "/";
@@ -98,7 +99,7 @@ export default class SignInForm extends Component<any, SignInFormState> {
     const loginError = getLoginErrors(login);
     let errors = this.state.errors;
     if (!loginError) {
-      delete errors.login;
+      errors.login = null;
     } else {
       errors.login = loginError;
     }
@@ -109,11 +110,10 @@ export default class SignInForm extends Component<any, SignInFormState> {
   }
 
   checkPassword(password: string): boolean {
-    /*
-    const passwordError = getPasswordErrors(password);
+    const passwordError = password.length >= 6 ? null : "Mot de passe invalid";
     let errors = this.state.errors;
     if (!passwordError) {
-      delete errors.password;
+      errors.password = null;
     } else {
       errors.password = passwordError;
     }
@@ -121,9 +121,6 @@ export default class SignInForm extends Component<any, SignInFormState> {
     this.setState({ errors });
 
     return !passwordError;
-    */
-
-    return true;
   }
 
   get isValid() {
@@ -131,59 +128,62 @@ export default class SignInForm extends Component<any, SignInFormState> {
   }
 
   render() {
-    return <React.Fragment></React.Fragment>;
-
-    /*
-    <Form
-          className="w-50 mb-3 mx-auto d-flex flex-column justify-content-center align-items-center"
-          onSubmit={this.handleSubmit}
-        >
-          <Form.Group className="w-100 mb-3" controlId="formBasicLogin">
-            <Form.Label>Pseudo ou Email</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="pseudo ou email"
+    return (
+      <React.Fragment>
+        <Form onSubmit={this.handleSubmit} className="w-full max-w-sm">
+          <div className={["flex", "flex-col", "items-center"].join(" ")}>
+            <TextField
+              required
+              className="w-5/6"
+              label="Pseudo ou Email"
               value={this.state.values.login}
-              isValid={!this.state.errors.login}
-              isInvalid={this.state.touched.login && !!this.state.errors.login}
               onChange={this.handleLoginChange}
+              error={!!this.state.errors.login && this.state.touched.login}
+              helperText={this.state.touched.login && this.state.errors.login}
+              placeholder="pseudo ou email"
             />
-            <Form.Control.Feedback type="invalid" tooltip>
-              {this.state.errors.login}
-            </Form.Control.Feedback>
-          </Form.Group>
-
-          <Form.Group className="w-100 mb-3" controlId="formBasicPassword">
-            <Form.Label>Mot de passe</Form.Label>
-            <Form.Control
+            <TextField
+              required
+              className="w-5/6"
               type="password"
-              placeholder="Mot de passe"
+              label="Mot de passe"
               value={this.state.values.password}
-              isValid={!this.state.errors.password}
-              isInvalid={
-                this.state.touched.password && !!this.state.errors.password
-              }
               onChange={this.handlePasswordChange}
+              error={
+                !!this.state.errors.password && this.state.touched.password
+              }
+              helperText={
+                this.state.touched.password && this.state.errors.password
+              }
+              placeholder="mot de passe"
             />
-            <Form.Control.Feedback type="invalid" tooltip>
-              {this.state.errors.password}
-            </Form.Control.Feedback>
-          </Form.Group>
-
+          </div>
           <div>
-            <Button variant="primary" type="submit" disabled={!this.isValid}>
-              Se connecter
-            </Button>
-            <Link to="/signup">
-              <Button variant="link">S'incrire</Button>
-            </Link>
+            <div className="w-full mt-4 flex justify-evenly items-center">
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="small"
+                disabled={!this.isValid}
+              >
+                Connexion
+              </Button>
+
+              <Link to="/signup">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  component="div"
+                  size="small"
+                >
+                  S'incrire
+                </Button>
+              </Link>
+            </div>
           </div>
         </Form>
-        {!!this.state.alert && (
-          <Alert variant={this.state.alert.variant}>
-            {this.state.alert.message}
-          </Alert>
-        )}
-    */
+      </React.Fragment>
+    );
   }
 }

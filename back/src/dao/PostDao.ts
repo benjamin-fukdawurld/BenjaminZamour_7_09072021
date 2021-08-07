@@ -4,9 +4,45 @@ import { knexDb, QueryOptions } from '../database';
 export default {
   async getPosts(options?: QueryOptions): Promise<Post[]> {
     const posts = knexDb
-      .select(knexDb.raw('post.*, employee.login, employee.avatar_url'))
+      .select(
+        knexDb.raw(
+          [
+            'post.*',
+            'employee.login as employee_login, employee.avatar_url as employee_avatar_url',
+            'up_vote.up_vote_count',
+            'down_vote.down_vote_count',
+            'comment.comment_count',
+          ].join(','),
+        ),
+      )
       .from<Post>('post')
-      .leftJoin('employee', 'post.employee_id', 'employee.id');
+      .leftJoin('employee', 'post.employee_id', 'employee.id')
+      .leftJoin(
+        knexDb('vote')
+          .select(knexDb.raw('post_id, COUNT(id) as up_vote_count'))
+          .where('value', '>', 0)
+          .groupBy('postId')
+          .as('up_vote'),
+        'post.id',
+        'up_vote.post_id',
+      )
+      .leftJoin(
+        knexDb('vote')
+          .select(knexDb.raw('post_id, COUNT(id) as down_vote_count'))
+          .where('value', '<', 0)
+          .groupBy('postId')
+          .as('down_vote'),
+        'post.id',
+        'down_vote.post_id',
+      )
+      .leftJoin(
+        knexDb('comment')
+          .select(knexDb.raw('post_id, COUNT(id) as comment_count'))
+          .groupBy('postId')
+          .as('comment'),
+        'post.id',
+        'comment.post_id',
+      );
 
     if (options?.filters) {
       posts.where(options.filters);
@@ -24,6 +60,7 @@ export default {
       posts.orderBy(options.orderBy);
     }
 
+    console.log(posts.toSQL());
     return posts;
   },
 

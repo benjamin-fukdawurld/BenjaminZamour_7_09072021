@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import argon2 from 'argon2';
 import assert from 'assert';
+import utils from '../common/utils';
 
 import { User } from '../models/User';
 import logger from '../common/logger';
@@ -46,8 +47,18 @@ class UserController {
   public async updateUser(req: Request, res: Response) {
     const { id } = req.params;
 
+    let user: User | null = null;
+    if (req.file) {
+      user = {
+        ...JSON.parse(req.body.user),
+        avatarUrl: utils.getMediaUrl(req),
+      } as User;
+    } else {
+      user = req.body as User;
+    }
+
     try {
-      const serviceResponse = await service.updateUser(parseFloat(id), req.body as User);
+      const serviceResponse = await service.updateUser(parseFloat(id), user);
       res.status(serviceResponse.status).send(serviceResponse.result);
     } catch (err) {
       res.status(500).send({ message: 'Unable to update this user' });

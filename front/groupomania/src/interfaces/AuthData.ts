@@ -6,4 +6,5 @@ export interface AuthData {
   token?: string;
   login?: string;
   privilege?: number;
+  avatarUrl?: string;
 }
