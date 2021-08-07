@@ -12,7 +12,7 @@ import { theme } from "../../../../Theme";
 
 export interface PostProps {
   id: number;
-  userId: number;
+  authorId: number;
   title: string;
   mediaUrl: string | null;
   description: string | null;
@@ -24,7 +24,10 @@ export interface PostProps {
   commentCount: number | null;
 }
 
-export interface PostState {}
+export interface PostState {
+  liked: boolean;
+  disliked: boolean;
+}
 
 export default class Post extends Component<PostProps, PostState> {
   private server: AxiosInstance;
@@ -36,15 +39,54 @@ export default class Post extends Component<PostProps, PostState> {
     this.authData = getAuthData();
     this.server = createServer(this.authData?.token);
 
+    this.state = {
+      liked: false,
+      disliked: false,
+    };
+
     this.handleLike = this.handleLike.bind(this);
   }
 
-  handleLike() {
-    this.server.post("/votes/", {
-      employeeId: 1,
-      postId: 1,
-      value: 1,
+  private async vote(value: number) {
+    return this.server.post("/votes/", {
+      employeeId: this.props.authorId,
+      postId: this.props.id,
+      value,
     });
+  }
+
+  private async unvote() {
+    return this.server.delete(
+      `/votes/post/${this.props.id}/${this.props.authorId}`
+    );
+  }
+
+  async handleLike() {
+    try {
+      if (!this.state.liked) {
+        await this.unvote();
+      } else {
+        await this.vote(1);
+      }
+
+      this.setState({ liked: !this.state.liked });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async handleDislike() {
+    try {
+      if (!this.state.disliked) {
+        await this.unvote();
+      } else {
+        await this.vote(-1);
+      }
+
+      this.setState({ disliked: !this.state.disliked });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   render() {
@@ -94,10 +136,12 @@ export default class Post extends Component<PostProps, PostState> {
           </div>
         </PostContainer>
         <PostActions
+          liked={this.state.liked}
           upVoteCount={this.props.upVoteCount}
-          onLike={() => console.log("like")}
+          onLike={this.handleLike}
+          disliked={this.state.disliked}
           downVoteCount={this.props.downVoteCount}
-          onDislike={() => console.log("dislike")}
+          onDislike={this.handleLike}
           commentCount={this.props.commentCount}
           onComment={() => console.log("comment")}
         />{" "}

@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 
 interface PostActionProps {
+  active?: boolean;
   count: number | null;
   label: string;
   icon: ElementType;
@@ -19,7 +20,9 @@ export default function PostAction(props: PostActionProps) {
       <Hidden xsDown>
         <Button
           style={{
-            color: theme.palette.primary.contrastText,
+            color: props.active
+              ? theme.palette.secondary
+              : theme.palette.primary.contrastText,
             minWidth: "20%",
           }}
           color="primary"
@@ -39,7 +42,9 @@ export default function PostAction(props: PostActionProps) {
       <Hidden smUp>
         <IconButton
           style={{
-            color: theme.palette.primary.contrastText,
+            color: props.active
+              ? theme.palette.secondary
+              : theme.palette.primary.contrastText,
           }}
           onClick={props.onClick}
         >

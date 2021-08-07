@@ -20,17 +20,17 @@ export default function UserButton(props: any) {
         border: `solid 2px ${theme.palette.primary.main}`,
       }}
     >
-      <Avatar>
-        {authData?.authenticated ? (
+      {authData?.authenticated && authData?.avatarUrl ? (
+        <Avatar>
           <img
             src={authData.avatarUrl}
             alt="avatar de l'utilisateur"
             style={{ height: "3rem", width: "3rem" }}
           />
-        ) : (
-          <PersonIcon style={{ height: "3rem", width: "3rem" }} />
-        )}
-      </Avatar>
+        </Avatar>
+      ) : (
+        <PersonIcon style={{ height: "3rem", width: "3rem" }} />
+      )}
     </IconButton>
   );
 }

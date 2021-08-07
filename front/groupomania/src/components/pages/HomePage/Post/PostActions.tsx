@@ -7,6 +7,8 @@ import CommentIcon from "@material-ui/icons/Comment";
 import Action from "./PostAction";
 
 interface PostActionsProps {
+  liked: boolean;
+  disliked: boolean;
   upVoteCount: number | null;
   downVoteCount: number | null;
   commentCount: number | null;
@@ -33,12 +35,14 @@ export default function PostActions(props: PostActionsProps) {
       }}
     >
       <Action
+        active={props.liked}
         count={props.upVoteCount}
         icon={ThumbUpIcon}
         label="j'aime"
         onClick={props.onLike}
       />
       <Action
+        active={props.disliked}
         count={props.downVoteCount}
         icon={ThumbDownIcon}
         label="je n'aime pas"

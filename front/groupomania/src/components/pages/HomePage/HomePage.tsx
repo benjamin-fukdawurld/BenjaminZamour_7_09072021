@@ -60,7 +60,7 @@ export default class HomPage extends Component<{}, HomePageState> {
           posts: res.data.map((post: any): PostProps => {
             return {
               id: post.id,
-              userId: post.employeeid,
+              authorId: post.employeeid,
               title: post.title,
               mediaUrl: post.mediaurl,
               tags: post.tags.split(","),
