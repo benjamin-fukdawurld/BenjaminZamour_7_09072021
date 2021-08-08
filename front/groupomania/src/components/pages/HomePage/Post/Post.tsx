@@ -1,27 +1,17 @@
 import React, { Component } from "react";
-import { AxiosInstance } from "axios";
 import { PostContainer } from "./style";
-import { Typography, Divider } from "@material-ui/core";
-import Chip from "@material-ui/core/Chip";
 
 import PostActions from "./PostActions";
-import createServer from "../../../../common/server";
-import { getAuthData } from "../../../../common/auth";
-import { AuthData } from "../../../../interfaces/AuthData";
-import { theme } from "../../../../Theme";
+
+import PostTitle from "./PostTitle";
+import PostData from "./PostData";
+import PostModel from "../../../../interfaces/Post";
+
+import Context from "../../../../Context";
 
 export interface PostProps {
-  id: number;
-  authorId: number;
-  title: string;
-  mediaUrl: string | null;
-  description: string | null;
-  tags: string[];
-  publishDate: Date;
-  lastModificationDate: Date | null;
-  upVoteCount: number | null;
-  downVoteCount: number | null;
-  commentCount: number | null;
+  post: PostModel;
+  onVote: () => void;
 }
 
 export interface PostState {
@@ -30,14 +20,8 @@ export interface PostState {
 }
 
 export default class Post extends Component<PostProps, PostState> {
-  private server: AxiosInstance;
-  private authData: AuthData | null;
-
   constructor(props: PostProps) {
     super(props);
-
-    this.authData = getAuthData();
-    this.server = createServer(this.authData?.token);
 
     this.state = {
       liked: false,
@@ -45,29 +29,44 @@ export default class Post extends Component<PostProps, PostState> {
     };
 
     this.handleLike = this.handleLike.bind(this);
+    this.handleDislike = this.handleDislike.bind(this);
   }
 
   private async vote(value: number) {
-    return this.server.post("/votes/", {
-      employeeId: this.props.authorId,
-      postId: this.props.id,
+    return this.context.server.post("/votes/", {
+      employeeId: this.props.post.authorId,
+      postId: this.props.post.id,
       value,
     });
   }
 
   private async unvote() {
-    return this.server.delete(
-      `/votes/post/${this.props.id}/${this.props.authorId}`
+    return this.context.server.delete(
+      `/votes/post/${this.props.post.id}/${this.props.post.authorId}`
+    );
+  }
+
+  private async changeVote(value: number) {
+    return this.context.server.put(
+      `/votes/post/${this.props.post.id}/${this.props.post.authorId}`,
+      {
+        value,
+      }
     );
   }
 
   async handleLike() {
     try {
-      if (!this.state.liked) {
+      if (this.state.liked) {
         await this.unvote();
+      } else if (this.state.disliked) {
+        await this.changeVote(1);
+        this.setState({ disliked: false });
       } else {
         await this.vote(1);
       }
+
+      this.props.onVote();
 
       this.setState({ liked: !this.state.liked });
     } catch (err) {
@@ -77,11 +76,16 @@ export default class Post extends Component<PostProps, PostState> {
 
   async handleDislike() {
     try {
-      if (!this.state.disliked) {
+      if (this.state.disliked) {
         await this.unvote();
+      } else if (this.state.liked) {
+        await this.changeVote(-1);
+        this.setState({ liked: false });
       } else {
         await this.vote(-1);
       }
+
+      this.props.onVote();
 
       this.setState({ disliked: !this.state.disliked });
     } catch (err) {
@@ -92,60 +96,29 @@ export default class Post extends Component<PostProps, PostState> {
   render() {
     return (
       <React.Fragment>
-        <PostContainer component="article" data-id={this.props.id}>
-          <Typography
-            variant="h1"
-            component="h2"
-            style={{
-              margin: theme.spacing(2),
-              marginBottom: theme.spacing(0.5),
-            }}
-          >
-            {this.props.title}
-          </Typography>
-          <Divider
-            variant="middle"
-            color="primary"
-            light
-            style={{
-              borderTop: "solid 1px",
-
-              borderColor: theme.palette.primary.dark,
-
-              opacity: 0.2,
-            }}
+        <PostContainer component="article" data-id={this.props.post.id}>
+          <PostTitle title={this.props.post.title} />
+          <PostTitle.Divider />
+          <PostData
+            mediaUrl={this.props.post.mediaUrl}
+            title={this.props.post.title}
+            description={this.props.post.description}
+            tags={this.props.post.tags}
           />
-          <div style={{ margin: theme.spacing(2) }}>
-            {this.props.mediaUrl && (
-              <img src={this.props.mediaUrl} alt={this.props.title} />
-            )}
-            {this.props.description && (
-              <Typography variant="body1">{this.props.description}</Typography>
-            )}
-            <div className="flex flex-row justify-start items-center flex-wrap mt-2">
-              {this.props.tags.map((tag: string, index: number) => (
-                <Chip
-                  key={index}
-                  label={tag}
-                  color="primary"
-                  style={{ margin: theme.spacing(1), height: "1.5rem" }}
-                  onClick={() => console.log("not implemented yet")}
-                />
-              ))}
-            </div>
-          </div>
         </PostContainer>
         <PostActions
           liked={this.state.liked}
-          upVoteCount={this.props.upVoteCount}
+          upVoteCount={this.props.post.upVoteCount}
           onLike={this.handleLike}
           disliked={this.state.disliked}
-          downVoteCount={this.props.downVoteCount}
-          onDislike={this.handleLike}
-          commentCount={this.props.commentCount}
+          downVoteCount={this.props.post.downVoteCount}
+          onDislike={this.handleDislike}
+          commentCount={this.props.post.commentCount}
           onComment={() => console.log("comment")}
-        />{" "}
+        />
       </React.Fragment>
     );
   }
 }
+
+Post.contextType = Context;

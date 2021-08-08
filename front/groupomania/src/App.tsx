@@ -10,6 +10,8 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import { theme } from "./Theme";
+import Context, { defaultValue } from "./Context";
+
 class App extends Component {
   render() {
     const pages = [
@@ -32,23 +34,25 @@ class App extends Component {
     ];
 
     return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <div
-          style={{
-            backgroundImage: "url(/images/bg.jpg)",
-            backgroundSize: "cover",
-            backgroundAttachment: "fixed",
-            backgroundPosition: "center",
-            minHeight: "100vh",
-          }}
-        >
-          <Header />
-          {pages.map((page) => (
-            <Route exact {...page} key={page.path} />
-          ))}
-        </div>
-      </ThemeProvider>
+      <Context.Provider value={defaultValue}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <div
+            style={{
+              backgroundImage: "url(/images/bg.jpg)",
+              backgroundSize: "cover",
+              backgroundAttachment: "fixed",
+              backgroundPosition: "center",
+              minHeight: "100vh",
+            }}
+          >
+            <Header />
+            {pages.map((page) => (
+              <Route exact {...page} key={page.path} />
+            ))}
+          </div>
+        </ThemeProvider>
+      </Context.Provider>
     );
   }
 }

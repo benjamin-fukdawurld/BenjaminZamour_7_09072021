@@ -1,5 +1,5 @@
 import React from "react";
-import { AuthData } from "../../../interfaces/AuthData";
+import AuthData from "../../../interfaces/AuthData";
 import ConnectionLinks from "./ConnectionLinks";
 import LogOutButton from "./LogOutButton";
 import UserButton from "./UserButton";

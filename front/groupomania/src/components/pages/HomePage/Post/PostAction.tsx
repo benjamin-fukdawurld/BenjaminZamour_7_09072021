@@ -21,7 +21,7 @@ export default function PostAction(props: PostActionProps) {
         <Button
           style={{
             color: props.active
-              ? theme.palette.secondary
+              ? theme.palette.secondary.dark
               : theme.palette.primary.contrastText,
             minWidth: "20%",
           }}

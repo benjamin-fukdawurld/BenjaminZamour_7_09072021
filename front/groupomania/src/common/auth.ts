@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-import { AuthData } from "../interfaces/AuthData";
+import AuthData from "../interfaces/AuthData";
 import ConnectionData from "../interfaces/ConnectionData";
 
 export function getAuthData(): AuthData | null {
@@ -29,7 +29,6 @@ export async function logIn(data: ConnectionData): Promise<AxiosResponse<any>> {
   return axios
     .post<ConnectionData>("http://localhost:5000/users/login", data)
     .then((res: AxiosResponse<any>) => {
-      console.log(res.data);
       localStorage.setItem(
         "groupomania_auth",
         JSON.stringify({

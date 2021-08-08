@@ -1,10 +1,14 @@
-import axios, { AxiosResponse } from "axios";
+import { AxiosInstance } from "axios";
 import { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { getAuthData, isLogged } from "../../../common/auth";
 import Post, { PostProps } from "./Post";
 import PostForm from "./PostForm";
 import Main from "../../common/Main";
+
+import PostModel from "../../../interfaces/Post";
+import createServer from "../../../server/server";
+import { addPost, getPost, getPosts } from "../../../server/PostService";
 
 interface HomePageState {
   posts: PostProps[];
@@ -14,8 +18,11 @@ interface HomePageState {
 }
 
 export default class HomPage extends Component<{}, HomePageState> {
+  private server: AxiosInstance;
   constructor(props: any) {
     super(props);
+
+    this.server = createServer(getAuthData()?.token);
 
     this.state = {
       posts: [],
@@ -25,57 +32,42 @@ export default class HomPage extends Component<{}, HomePageState> {
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleVote = this.handleVote.bind(this);
   }
 
   async handleSubmit(event: any) {
     try {
-      await axios.post(
-        "http://localhost:5000/posts",
-        {
-          employeeId: getAuthData()?.userId as number,
-          title: this.state.newPostTitle,
-          tags: this.state.newPostTags.join(","),
-          description: this.state.newPostText,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getAuthData()?.token}`,
-          },
-        }
-      );
+      await addPost(this.server, {
+        employeeId: getAuthData()?.userId as number,
+        title: this.state.newPostTitle,
+        tags: this.state.newPostTags.join(","),
+        description: this.state.newPostText,
+      });
     } catch (err) {
       console.error(err);
     }
   }
 
-  componentDidMount() {
-    axios
-      .get("http://localhost:5000/posts", {
-        headers: {
-          Authorization: `Bearer ${getAuthData()?.token}`,
-        },
-      })
-      .then((res: AxiosResponse) => {
-        this.setState({
-          posts: res.data.map((post: any): PostProps => {
-            return {
-              id: post.id,
-              authorId: post.employeeid,
-              title: post.title,
-              mediaUrl: post.mediaurl,
-              tags: post.tags.split(","),
-              description: post.description,
-              publishDate: new Date(post.publishdate),
-              lastModificationDate: post.lastmodificationdate
-                ? new Date(post.lastmodificationdate)
-                : null,
-              upVoteCount: post.upVoteCount,
-              downVoteCount: post.downVoteCount,
-              commentCount: post.commentCount,
-            };
-          }),
-        });
-      });
+  async componentDidMount() {
+    const res = await getPosts(this.server);
+    this.setState({
+      posts: res.map((post: PostModel) => ({
+        post,
+        onVote: () => this.handleVote(post.id),
+      })),
+    });
+  }
+
+  async handleVote(id: number) {
+    const post = await getPost(this.server, id);
+
+    this.setState({
+      posts: this.state.posts.map((props: PostProps) =>
+        props.post.id !== id
+          ? props
+          : { post, onVote: () => this.handleVote(id) }
+      ),
+    });
   }
 
   render() {
@@ -108,7 +100,7 @@ export default class HomPage extends Component<{}, HomePageState> {
           onSubmit={this.handleSubmit}
         />
         {this.state.posts.map((post: PostProps) => (
-          <Post key={post.id} {...post} />
+          <Post key={post.post.id} {...post} />
         ))}
       </Main>
     );

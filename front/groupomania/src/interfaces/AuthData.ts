@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 
-export interface AuthData {
+export default interface AuthData {
   authenticated: boolean;
   userId?: number;
   token?: string;

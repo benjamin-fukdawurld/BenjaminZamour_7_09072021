@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { getAuthData, isLogged } from "../../../common/auth";
 import Main from "../../common/Main";
-import createServer from "../../../common/server";
+import createServer from "../../../server/server";
 import UserProfile from "./UserProfile";
 
 interface UserProfileProps {}
