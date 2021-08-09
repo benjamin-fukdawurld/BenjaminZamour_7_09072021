@@ -5,6 +5,7 @@ import { getAuthData, isLogged } from "../../../common/auth";
 import Main from "../../common/Main";
 import createServer from "../../../server/server";
 import UserProfile from "./UserProfile";
+import { getUser } from "../../../server/UserService";
 
 interface UserProfileProps {}
 
@@ -67,6 +68,12 @@ export default class UserProfilePage extends Component<
       };
 
       await this.server.patch(`users/${this.state.id}`, generateData());
+      const user = await getUser(this.server, this.state.id);
+      let authData = getAuthData();
+      if (authData && user.avatarUrl) {
+        authData.avatarUrl = user.avatarUrl;
+      }
+      localStorage.setItem("groupomania_auth", JSON.stringify(authData));
 
       this.setState({ touched: {} });
     } catch (err: any) {

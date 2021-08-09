@@ -18,6 +18,7 @@ interface UserProfileProps {
 
 interface UserProfileState {
   isEditing: boolean;
+  avatarPreviewUrl: string | null;
 }
 
 export default class UserProfile extends Component<
@@ -29,6 +30,7 @@ export default class UserProfile extends Component<
 
     this.state = {
       isEditing: false,
+      avatarPreviewUrl: null,
     };
   }
 
@@ -45,6 +47,11 @@ export default class UserProfile extends Component<
                   type="file"
                   hidden
                   onChange={(event: any) => {
+                    this.setState({
+                      avatarPreviewUrl: URL.createObjectURL(
+                        event.target.files[0]
+                      ),
+                    });
                     this.props.onChange({
                       avatar:
                         event.target?.files?.length > 0
@@ -58,7 +65,7 @@ export default class UserProfile extends Component<
             <Avatar
               title="avatar de l'utilisateur"
               alt="avatar de l'utilisateur"
-              src={this.props.user?.avatarUrl}
+              src={this.state.avatarPreviewUrl ?? this.props.user?.avatarUrl}
             />
             <input type="file" hidden />
           </IconButton>
@@ -80,7 +87,15 @@ export default class UserProfile extends Component<
                 if (this.state.isEditing) {
                   this.props.onSave();
                 }
-                this.setState({ isEditing: !this.state.isEditing });
+
+                if (this.state.avatarPreviewUrl) {
+                  URL.revokeObjectURL(this.state.avatarPreviewUrl);
+                }
+
+                this.setState({
+                  isEditing: !this.state.isEditing,
+                  avatarPreviewUrl: null,
+                });
               }}
             >
               {this.state.isEditing ? "Enregistrer" : "Éditer"}

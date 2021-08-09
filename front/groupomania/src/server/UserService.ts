@@ -22,8 +22,11 @@ export async function getUsers(server: AxiosInstance): Promise<User[]> {
   );
 }
 
-export async function getUser(server: AxiosInstance): Promise<User> {
-  const res = await server.get("/users");
+export async function getUser(
+  server: AxiosInstance,
+  id: number
+): Promise<User> {
+  const res = await server.get(`/users/${id}`);
   const user = res.data;
 
   return {
