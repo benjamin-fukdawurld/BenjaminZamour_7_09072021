@@ -1,19 +1,20 @@
 import React from "react";
-import AuthData from "../../../interfaces/AuthData";
 import ConnectionLinks from "./ConnectionLinks";
 import LogOutButton from "./LogOutButton";
 import UserButton from "./UserButton";
 
+import User from "../../../interfaces/User";
+
 interface UserAreaProps {
-  authData: AuthData | null;
+  user: User | null;
 }
 
 export default function UserArea(props: UserAreaProps) {
   return (
     <div>
-      {props.authData?.authenticated ? (
+      {props.user ? (
         <div>
-          <UserButton />
+          <UserButton avatarUrl={props.user?.avatarUrl || null} />
           <LogOutButton />
         </div>
       ) : (

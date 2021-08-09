@@ -1,12 +1,28 @@
 import React from "react";
+import { Theme } from "@material-ui/core/styles/createTheme";
+import { useTheme } from "@material-ui/core/styles/";
+
 import IconButton from "@material-ui/core/IconButton";
 import PersonIcon from "@material-ui/icons/Person";
-import { getAuthData } from "../../../../common/auth";
 import Avatar from "@material-ui/core/Avatar";
-import { theme } from "../../../../Theme";
+import { makeStyles } from "@material-ui/core";
 
-export default function UserButton(props: any) {
-  const authData = getAuthData();
+interface UserButtonProps {
+  avatarUrl: string | null;
+}
+
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    padding: 0,
+    marginRight: theme.spacing(2),
+    border: `solid 2px ${theme.palette.primary.main}`,
+  },
+  icon: { height: "3rem", width: "3rem" },
+}));
+
+export default function UserButton(props: UserButtonProps) {
+  const theme = useTheme();
+  const classes = useStyles(theme);
   return (
     <IconButton
       onClick={() => {
@@ -14,22 +30,24 @@ export default function UserButton(props: any) {
       }}
       color="primary"
       title="profil utilisateur"
-      style={{
-        padding: 0,
-        marginRight: theme.spacing(2),
-        border: `solid 2px ${theme.palette.primary.main}`,
+      classes={{
+        root: classes.root,
       }}
     >
-      {authData?.authenticated && authData?.avatarUrl ? (
+      {props.avatarUrl ? (
         <Avatar>
           <img
-            src={authData.avatarUrl}
+            src={props.avatarUrl}
             alt="avatar de l'utilisateur"
-            style={{ height: "3rem", width: "3rem" }}
+            className={classes.icon}
           />
         </Avatar>
       ) : (
-        <PersonIcon style={{ height: "3rem", width: "3rem" }} />
+        <PersonIcon
+          classes={{
+            root: classes.icon,
+          }}
+        />
       )}
     </IconButton>
   );

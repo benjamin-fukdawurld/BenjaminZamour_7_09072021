@@ -21,7 +21,7 @@ export function getAuthData(): AuthData | null {
 }
 
 export function logOut() {
-  localStorage.clear();
+  localStorage.removeItem("groupomania_auth");
   window.location.href = "/";
 }
 

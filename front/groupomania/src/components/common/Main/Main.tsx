@@ -1,23 +1,24 @@
+import { makeStyles, useTheme } from "@material-ui/styles";
+import { Theme } from "@material-ui/core/styles/createTheme";
 import React from "react";
 
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    padding: theme.spacing(12, 2, 2),
+    maxWidth: "36rem",
+    margin: "auto",
+    [theme.breakpoints.up("md")]: {
+      width: "80%",
+    },
+  },
+}));
+
 export default function Main(props: any) {
-  return (
-    <main
-      className={[
-        "flex",
-        "flex-col",
-        "justify-start",
-        "items-center",
-        "px-4",
-        "pb-4",
-        "md:w-4/5",
-        "max-w-screen-md",
-        "mx-auto",
-        "pt-16",
-        "md:pt-24",
-      ].join(" ")}
-    >
-      {props.children}
-    </main>
-  );
+  const theme = useTheme<Theme>();
+  const classes = useStyles(theme);
+  return <main className={classes.root}>{props.children}</main>;
 }

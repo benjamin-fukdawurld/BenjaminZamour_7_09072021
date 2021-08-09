@@ -36,11 +36,11 @@ export default {
         query.where({ employeeId });
 
         if (postId) {
-          query.orWhere({ postId });
+          query.where({ postId });
         }
 
         if (commentId) {
-          query.orWhere({ commentId });
+          query.where({ commentId });
         }
       });
     if (!votes.length) {

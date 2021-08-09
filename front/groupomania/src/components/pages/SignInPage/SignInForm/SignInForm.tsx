@@ -6,7 +6,7 @@ import Form from "../../../common/Form";
 
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { logIn } from "../../../../common/auth";
+import Context from "../../../../Context";
 
 interface SignInFormState {
   values: {
@@ -28,6 +28,8 @@ interface SignInFormState {
 }
 
 export default class SignInForm extends Component<any, SignInFormState> {
+  static contextType = Context;
+
   constructor(props: any) {
     super(props);
 
@@ -71,7 +73,7 @@ export default class SignInForm extends Component<any, SignInFormState> {
     );
   }
 
-  handleSubmit(event: any) {
+  async handleSubmit(event: any) {
     event.preventDefault();
     let data: any = {};
     if (checkEmail(this.state.values.login).isValid) {
@@ -82,17 +84,20 @@ export default class SignInForm extends Component<any, SignInFormState> {
 
     data.password = this.state.values.password;
 
-    logIn(data)
-      .then((res: any) => {
+    try {
+      await this.context.userService.logIn(data).then((res: any) => {
         const { values, errors, touched } = this.state;
         this.setState({ values, errors, touched });
         window.location.href = "/";
-      })
-      .catch((err) => {
-        this.setState({
-          alert: { variant: "danger", message: "Connexion échouée" },
-        });
       });
+      if (this.context.updater) {
+        this.context.updater();
+      }
+    } catch (err) {
+      this.setState({
+        alert: { variant: "danger", message: "Connexion échouée" },
+      });
+    }
   }
 
   checkLogin(login: string): boolean {

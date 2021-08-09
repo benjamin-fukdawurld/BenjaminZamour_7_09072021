@@ -5,14 +5,14 @@ import { getAuthData, isLogged } from "../../../common/auth";
 import Main from "../../common/Main";
 import createServer from "../../../server/server";
 import UserProfile from "./UserProfile";
-import { getUser } from "../../../server/UserService";
+import Context from "../../../Context";
 
 interface UserProfileProps {}
 
 interface UserProfileState {
   id: number;
   touched: any;
-  user: any | null;
+  userNewValues: any | null;
   departments: any[];
 }
 
@@ -20,13 +20,14 @@ export default class UserProfilePage extends Component<
   UserProfileProps,
   UserProfileState
 > {
+  static contextType = Context;
   private server: AxiosInstance;
   constructor(props: any) {
     super(props);
 
     this.state = {
       id: getAuthData()?.userId as number,
-      user: null,
+      userNewValues: null,
       touched: {},
       departments: [],
     };
@@ -47,19 +48,23 @@ export default class UserProfilePage extends Component<
           return Object.fromEntries(
             Object.keys(this.state.touched).map((key: string) => [
               key,
-              this.state.user[key] ? this.state.user[key] : null,
+              this.state.userNewValues[key]
+                ? this.state.userNewValues[key]
+                : null,
             ])
           );
         }
 
         const formData = new FormData();
-        formData.append("image", this.state.user.avatar);
+        formData.append("image", this.state.userNewValues.avatar);
         const user = Object.fromEntries(
           Object.keys(this.state.touched)
             .filter((key) => key !== "avatar")
             .map((key: string) => [
               key,
-              this.state.user[key] ? this.state.user[key] : null,
+              this.state.userNewValues[key]
+                ? this.state.userNewValues[key]
+                : null,
             ])
         );
         formData.append("user", JSON.stringify(user));
@@ -67,14 +72,8 @@ export default class UserProfilePage extends Component<
         return formData;
       };
 
-      await this.server.patch(`users/${this.state.id}`, generateData());
-      const user = await getUser(this.server, this.state.id);
-      let authData = getAuthData();
-      if (authData && user.avatarUrl) {
-        authData.avatarUrl = user.avatarUrl;
-      }
-      localStorage.setItem("groupomania_auth", JSON.stringify(authData));
-
+      await this.context.userService.update(this.state.id, generateData());
+      await this.context.refreshUser();
       this.setState({ touched: {} });
     } catch (err: any) {
       console.error(err.message);
@@ -84,7 +83,7 @@ export default class UserProfilePage extends Component<
   async componentDidMount() {
     try {
       const userRes = await this.server.get(`users/${this.state.id}/profile`);
-      const user = Object.fromEntries(
+      const userNewValues = Object.fromEntries(
         Object.entries(userRes.data).map(([key, value]) => {
           if (key === "birthDate" && value !== null) {
             return [key, new Date(value as string)];
@@ -94,7 +93,7 @@ export default class UserProfilePage extends Component<
         })
       );
       const departmentRes = await this.server.get(`departments`);
-      this.setState({ user, departments: departmentRes.data });
+      this.setState({ userNewValues, departments: departmentRes.data });
     } catch (err: any) {
       console.error(err.message);
     }
@@ -108,9 +107,12 @@ export default class UserProfilePage extends Component<
     return (
       <Main>
         <UserProfile
-          user={this.state.user}
+          user={this.state.userNewValues}
           departments={this.state.departments}
-          isReadOnly={this.state.user}
+          isReadOnly={
+            this.state.userNewValues?.id &&
+            this.state.userNewValues.id !== this.context.authData.userId
+          }
           touched={this.state.touched}
           onChange={(fields: any) => {
             const keys = Object.keys(fields);
@@ -118,8 +120,12 @@ export default class UserProfilePage extends Component<
             for (const key of keys) {
               touched[key] = true;
             }
-            const user = Object.assign({}, this.state.user, fields);
-            this.setState({ user, touched });
+            const userNewValues = Object.assign(
+              {},
+              this.state.userNewValues,
+              fields
+            );
+            this.setState({ userNewValues, touched });
           }}
           onSave={this.handleSaveUser}
         />

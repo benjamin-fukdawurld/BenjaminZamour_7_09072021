@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 
 import {
@@ -12,7 +11,7 @@ import Form from "../../../common/Form";
 
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { logIn } from "../../../../common/auth";
+import Context from "../../../../Context";
 
 interface SignUpFormState {
   values: {
@@ -40,6 +39,7 @@ interface SignUpFormState {
 }
 
 export default class SignUpForm extends Component<{}, SignUpFormState> {
+  static contextType = Context;
   constructor(props: any) {
     super(props);
 
@@ -112,24 +112,23 @@ export default class SignUpForm extends Component<{}, SignUpFormState> {
     );
   }
 
-  handleSubmit(event: any) {
+  async handleSubmit(event: any) {
     event.preventDefault();
     const { login, email, password } = this.state.values;
-    axios
-      .post("http://localhost:5000/users/signup", { login, email, password })
-      .then((res) =>
-        logIn({ login, password }).then((res: any) => {
-          const { values, errors, touched } = this.state;
-          this.setState({ values, errors, touched });
-          window.location.href = "/";
-        })
-      )
-      .catch((err) => {
-        console.error(err);
-        this.setState({
-          alert: { variant: "danger", message: err.message },
-        });
+
+    try {
+      await this.context.userService.signUp({ login, email, password });
+      await this.context.userService.logIn({ login, password });
+      if (this.context.updater) {
+        this.context.updater();
+      }
+      window.location.href = "/";
+    } catch (err: any) {
+      console.error(err);
+      this.setState({
+        alert: { variant: "danger", message: err.message },
       });
+    }
   }
 
   checkLogin(login: string): boolean {
@@ -238,7 +237,7 @@ export default class SignUpForm extends Component<{}, SignUpFormState> {
               type="password"
               label="Confirmer mot de passe"
               value={this.state.values.confirmPassword}
-              onChange={this.handlePasswordChange}
+              onChange={this.handleConfirmPasswordChange}
               error={
                 !!this.state.errors.confirmPassword &&
                 this.state.touched.confirmPassword

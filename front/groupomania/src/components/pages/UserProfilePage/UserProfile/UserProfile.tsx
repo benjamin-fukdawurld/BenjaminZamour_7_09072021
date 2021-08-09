@@ -78,7 +78,7 @@ export default class UserProfile extends Component<
             isEditing={this.state.isEditing}
             onChange={this.props.onChange}
           />
-          <div className="text-right">
+          <div style={{ textAlign: "right" }}>
             <Button
               variant="contained"
               size="small"

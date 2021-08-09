@@ -10,31 +10,31 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import { theme } from "./Theme";
-import Context, { defaultValue } from "./Context";
+import Context from "./Context";
+import ContextManager from "./ContextManager";
 
-class App extends Component {
+interface AppState {
+  contextManager: ContextManager;
+}
+
+class App extends Component<{}, AppState> {
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+      contextManager: new ContextManager(() =>
+        this.setState({ contextManager: this.state.contextManager })
+      ),
+    };
+  }
+
+  componentDidMount() {
+    this.setState({ contextManager: this.state.contextManager });
+  }
+
   render() {
-    const pages = [
-      {
-        path: "/signup",
-        component: SignUpPage,
-      },
-      {
-        path: "/signin",
-        component: SignInPage,
-      },
-      {
-        path: "/user",
-        component: UserProfilePage,
-      },
-      {
-        path: "/",
-        component: HomePage,
-      },
-    ];
-
     return (
-      <Context.Provider value={defaultValue}>
+      <Context.Provider value={this.state.contextManager}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <div
@@ -47,9 +47,18 @@ class App extends Component {
             }}
           >
             <Header />
-            {pages.map((page) => (
-              <Route exact {...page} key={page.path} />
-            ))}
+            <Route exact path="/">
+              <HomePage />
+            </Route>
+            <Route exact path="/signup">
+              <SignUpPage />
+            </Route>
+            <Route exact path="/signin">
+              <SignInPage />
+            </Route>
+            <Route exact path="/user">
+              <UserProfilePage />
+            </Route>
           </div>
         </ThemeProvider>
       </Context.Provider>
