@@ -29,6 +29,7 @@ class App extends Component<{}, AppState> {
   }
 
   componentDidMount() {
+    this.state.contextManager.refreshUser();
     this.setState({ contextManager: this.state.contextManager });
   }
 

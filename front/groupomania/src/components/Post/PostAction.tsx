@@ -1,16 +1,10 @@
-import React, { ElementType } from "react";
+import React from "react";
 import { useTheme } from "@material-ui/styles";
 import Hidden from "@material-ui/core/Hidden";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 
-interface PostActionProps {
-  active?: boolean;
-  count: number | null;
-  label: string;
-  icon: ElementType;
-  onClick: () => void;
-}
+import { PostActionProps } from "./interfaces";
 
 export default function PostAction(props: PostActionProps) {
   const theme = useTheme<any>();

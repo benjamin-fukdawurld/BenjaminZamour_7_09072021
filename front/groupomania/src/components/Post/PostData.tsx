@@ -3,6 +3,8 @@ import { useTheme, makeStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import Chip from "@material-ui/core/Chip";
 
+import { PostDataProps } from "./interfaces";
+
 const useStyles = makeStyles((theme: any) => ({
   root: {
     margin: theme.spacing(2),
@@ -21,13 +23,6 @@ const useStyles = makeStyles((theme: any) => ({
     height: "1.5rem",
   },
 }));
-
-interface PostDataProps {
-  mediaUrl: string | null;
-  title: string | null;
-  description: string | null;
-  tags: string[] | null;
-}
 
 export default function PostData(props: PostDataProps) {
   const theme = useTheme<any>();

@@ -14,7 +14,7 @@ const User = styled(Box)({
   flexWrap: "wrap",
   alignItems: "center",
   padding: theme.spacing(2),
-  [theme.breakpoints.up("md")]: {
+  [theme.breakpoints.down("md")]: {
     width: "66%",
   },
 });

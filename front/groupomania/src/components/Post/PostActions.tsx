@@ -6,16 +6,7 @@ import CommentIcon from "@material-ui/icons/Comment";
 
 import Action from "./PostAction";
 
-interface PostActionsProps {
-  liked: boolean;
-  disliked: boolean;
-  upVoteCount: number | null;
-  downVoteCount: number | null;
-  commentCount: number | null;
-  onLike: () => void;
-  onDislike: () => void;
-  onComment: () => void;
-}
+import { PostActionsProps } from "./interfaces";
 
 export default function PostActions(props: PostActionsProps) {
   const theme = useTheme<any>();

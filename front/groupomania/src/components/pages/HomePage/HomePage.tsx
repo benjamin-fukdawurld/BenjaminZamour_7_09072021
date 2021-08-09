@@ -1,24 +1,30 @@
-import { AxiosInstance, AxiosResponse } from "axios";
+import { AxiosInstance } from "axios";
 import { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { getAuthData, isLogged } from "../../../common/auth";
-import Post, { PostProps } from "./Post";
+import Post, { PostProps } from "../../Post";
 import PostForm from "./PostForm";
 import Main from "../../common/Main";
 
 import PostModel from "../../../interfaces/Post";
 import createServer from "../../../server/server";
-import { addPost, getPost, getPosts } from "../../../server/PostService";
+import { getPost } from "../../../server/PostService";
 import AuthData from "../../../interfaces/AuthData";
+
+import Context from "../../../Context";
+import Vote from "../../../interfaces/Vote";
 
 interface HomePageState {
   posts: PostProps[];
   newPostTitle: string;
   newPostText: string;
   newPostTags: string[];
+  newPostImageUrl: string;
+  newPostImage: File | null;
 }
 
 export default class HomPage extends Component<{}, HomePageState> {
+  static contextType = Context;
   private server: AxiosInstance;
   private authData: AuthData | null;
   constructor(props: any) {
@@ -32,6 +38,8 @@ export default class HomPage extends Component<{}, HomePageState> {
       newPostText: "",
       newPostTitle: "",
       newPostTags: [],
+      newPostImageUrl: "",
+      newPostImage: null,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -40,12 +48,24 @@ export default class HomPage extends Component<{}, HomePageState> {
 
   async handleSubmit(event: any) {
     try {
-      await addPost(this.server, {
+      let post = {
         employeeId: this.authData?.userId as number,
         title: this.state.newPostTitle,
-        tags: this.state.newPostTags.join(","),
+        tags: this.state.newPostTags.join(",") || null,
         description: this.state.newPostText,
-      });
+      };
+
+      let data: any;
+      if (this.state.newPostImage) {
+        data = new FormData();
+        data.append("image", this.state.newPostImage);
+        data.append("post", JSON.stringify(post));
+      } else {
+        data = post;
+      }
+
+      console.log(data);
+      await this.context.postService.add(data);
     } catch (err) {
       console.error(err);
     }
@@ -53,31 +73,31 @@ export default class HomPage extends Component<{}, HomePageState> {
 
   async componentDidMount() {
     const userId = this.authData?.userId as number;
-    const res = await getPosts(this.server);
-    let voteResponses = await Promise.allSettled(
-      res.map((post: PostModel) =>
-        this.server.get(`/votes/post/${post.id}/${userId}`)
-      )
-    );
+    const posts = (await this.context.postService.getAll()) as PostModel[];
 
-    voteResponses = voteResponses.filter(
-      (result) => result.status === "fulfilled"
-    );
-
-    const votes = voteResponses.map(
-      (value: PromiseSettledResult<AxiosResponse<any>>) => {
-        return (value as PromiseFulfilledResult<AxiosResponse<any>>).value.data;
+    let votes: Vote[] = [];
+    for (const post of posts) {
+      try {
+        const vote = await this.context.voteService.getOne({
+          employeeId: userId,
+          postId: post.id,
+        });
+        votes.push(vote);
+      } catch (error: any) {
+        if (error.response.status !== 404) {
+          console.log(error);
+        }
       }
-    );
+    }
 
     this.setState({
-      posts: res.map((post: PostModel) => {
-        const vote = votes.find((value: any) => value.postId === post.id);
+      posts: posts.map((post: PostModel) => {
+        const vote = votes.find((value: Vote) => value.postId === post.id);
         if (vote) {
           return {
             post,
             onVote: (value: number) => this.handleVote(post.id, value),
-            vote: { postId: vote.postId, value: vote.value },
+            vote,
           };
         }
 
@@ -91,18 +111,18 @@ export default class HomPage extends Component<{}, HomePageState> {
 
   private async vote(post: PostModel, value: number) {
     return this.server.post("/votes/", {
-      employeeId: post.authorId,
+      employeeId: this.context.user.id,
       postId: post.id,
       value,
     });
   }
 
   private async unvote(post: PostModel) {
-    return this.server.delete(`/votes/post/${post.id}/${post.authorId}`);
+    return this.server.delete(`/votes/post/${post.id}/${this.context.user.id}`);
   }
 
   private async changeVote(post: PostModel, value: number) {
-    return this.server.put(`/votes/post/${post.id}/${post.authorId}`, {
+    return this.server.put(`/votes/post/${post.id}/${this.context.user.id}`, {
       value,
     });
   }
@@ -117,7 +137,11 @@ export default class HomPage extends Component<{}, HomePageState> {
             } else {
               await this.changeVote(postProps.post, value);
             }
-            postProps.vote = { postId: postProps.post.id, value: value };
+            postProps.vote = {
+              employeeId: this.context.user.id,
+              postId: postProps.post.id,
+              value: value,
+            };
           } else if (postProps.vote) {
             await this.unvote(postProps.post);
             delete postProps.vote;
@@ -146,6 +170,7 @@ export default class HomPage extends Component<{}, HomePageState> {
           postTitle={this.state.newPostTitle}
           postText={this.state.newPostText}
           postTags={this.state.newPostTags}
+          postImageUrl={this.state.newPostImageUrl}
           onAddTag={(tag: string) =>
             this.setState({ newPostTags: [tag, ...this.state.newPostTags] })
           }
@@ -162,6 +187,20 @@ export default class HomPage extends Component<{}, HomePageState> {
           onTextChange={(event: any) =>
             this.setState({ newPostText: event.target.value })
           }
+          onImageChange={(event: any) => {
+            if (!event.target?.files?.length) {
+              return;
+            }
+
+            const file = event.target.files[0];
+            if (this.state.newPostImageUrl) {
+              URL.revokeObjectURL(this.state.newPostImageUrl);
+            }
+            this.setState({
+              newPostImage: file,
+              newPostImageUrl: URL.createObjectURL(file),
+            });
+          }}
           onSubmit={this.handleSubmit}
         />
         {this.state.posts.map((post: PostProps) => (

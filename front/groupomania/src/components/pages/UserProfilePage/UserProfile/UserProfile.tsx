@@ -67,7 +67,6 @@ export default class UserProfile extends Component<
               alt="avatar de l'utilisateur"
               src={this.state.avatarPreviewUrl ?? this.props.user?.avatarUrl}
             />
-            <input type="file" hidden />
           </IconButton>
         </label>
         <Login value={this.props.user?.login} />

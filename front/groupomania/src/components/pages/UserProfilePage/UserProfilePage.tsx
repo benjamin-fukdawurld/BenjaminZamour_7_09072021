@@ -74,7 +74,16 @@ export default class UserProfilePage extends Component<
 
       await this.context.userService.update(this.state.id, generateData());
       await this.context.refreshUser();
-      this.setState({ touched: {} });
+      const userNewValues = Object.fromEntries(
+        Object.entries(this.context.user).map(([key, value]) => {
+          if (key === "birthDate" && value !== null) {
+            return [key, new Date(value as string)];
+          }
+
+          return [key, value ? value : ""];
+        })
+      );
+      this.setState({ userNewValues, touched: {} });
     } catch (err: any) {
       console.error(err.message);
     }
@@ -117,6 +126,9 @@ export default class UserProfilePage extends Component<
           onChange={(fields: any) => {
             const keys = Object.keys(fields);
             const touched = this.state.touched;
+            if ("birthDate" in fields) {
+              fields.birthDate = new Date(fields.birthDate);
+            }
             for (const key of keys) {
               touched[key] = true;
             }

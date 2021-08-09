@@ -18,6 +18,7 @@ import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ImageIcon from "@material-ui/icons/Image";
 import { theme } from "../../../../Theme";
 
 const useStyles = makeStyles((theme) => ({
@@ -90,6 +91,36 @@ export default function PostForm(props: any) {
             value={props.postTitle}
             onChange={props.onTitleChange}
           />
+          <Grid container justifyContent="center">
+            <Grid item xs={12}>
+              {props.postImageUrl && (
+                <img src={props.postImageUrl} alt={props.postTitle} />
+              )}
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              style={{ textAlign: "center", marginTop: theme.spacing(2) }}
+            >
+              <label htmlFor="post-image-file">
+                <Button
+                  variant="contained"
+                  startIcon={<ImageIcon />}
+                  component="span"
+                  size="small"
+                >
+                  <input
+                    accept="image/*"
+                    id="post-image-file"
+                    type="file"
+                    hidden
+                    onChange={props.onImageChange}
+                  />
+                  Chosir une image
+                </Button>
+              </label>
+            </Grid>
+          </Grid>
           <TextField
             required
             label="Contenu du post"
@@ -130,9 +161,9 @@ export default function PostForm(props: any) {
             </Grid>
             <Grid item xs={12} md={8}>
               <Grid container spacing={2}>
-                {props.postTags.map((tag: string) => {
+                {props.postTags.map((tag: string, index: number) => {
                   return (
-                    <Grid item>
+                    <Grid item key={index}>
                       <Chip
                         label={tag}
                         color="primary"

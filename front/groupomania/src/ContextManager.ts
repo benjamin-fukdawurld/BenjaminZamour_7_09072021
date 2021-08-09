@@ -46,20 +46,6 @@ export default class ContextManager {
     this.server = createServer(authData?.token);
     this.theme = theme;
     this.user = null;
-    if (authData?.authenticated) {
-      this.userService
-        .getProfile(authData.userId as number)
-        .then((user: User) => {
-          this.user = user;
-          if (this.updater) {
-            this.updater();
-          }
-        })
-        .catch((err: any) => {
-          throw err;
-        });
-    }
-
     this.updater = updater;
   }
 

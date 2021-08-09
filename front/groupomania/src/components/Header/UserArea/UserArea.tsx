@@ -14,7 +14,10 @@ export default function UserArea(props: UserAreaProps) {
     <div>
       {props.user ? (
         <div>
-          <UserButton avatarUrl={props.user?.avatarUrl || null} />
+          <UserButton
+            avatarUrl={props.user?.avatarUrl || null}
+            login={props.user.login}
+          />
           <LogOutButton />
         </div>
       ) : (

@@ -2,7 +2,7 @@ import React from "react";
 import { useTheme, makeStyles, withStyles } from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
-import { theme } from "../../../../Theme";
+import { theme } from "../../Theme";
 
 interface PostTitleProps {
   title: string | null;

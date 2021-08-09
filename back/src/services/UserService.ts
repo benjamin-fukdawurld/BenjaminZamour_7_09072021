@@ -28,7 +28,7 @@ async function getUsers(options?: QueryOptions): Promise<ServiceResponse<User[]>
 }
 
 async function getUser(id: number): Promise<ServiceResponse<User>> {
-  const user = await dao.getUser(id, ['id', 'login']);
+  const user = await dao.getUser(id, ['id', 'login', 'avatar_url']);
 
   if (!user) {
     return { status: 404, result: { message: `User '${id}' not found` } };

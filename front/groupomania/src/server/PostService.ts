@@ -8,9 +8,11 @@ export async function getPosts(server: AxiosInstance): Promise<Post[]> {
     (post: any): Post => ({
       id: post.id,
       authorId: post.employeeId,
+      author: post.employeeLogin,
+      authorAvatarUrl: post.employeeAvatarUrl,
       title: post.title,
       mediaUrl: post.mediaUrl,
-      tags: post.tags.split(","),
+      tags: post.tags?.split(",") ?? [],
       description: post.description,
       publishDate: new Date(post.publishDate),
       lastModificationDate: post.lastModificationDate
@@ -32,9 +34,11 @@ export async function getPost(
   return {
     id: post.data.id,
     authorId: post.data.employeeId,
+    author: post.data.employeeLogin,
+    authorAvatarUrl: post.data.employeeAvatarUrl,
     title: post.data.title,
     mediaUrl: post.data.mediaUrl,
-    tags: post.data.tags.split(","),
+    tags: post.data.tags?.split(",") ?? [],
     description: post.data.description,
     publishDate: new Date(post.data.publishDate),
     lastModificationDate: post.data.lastModificationDate

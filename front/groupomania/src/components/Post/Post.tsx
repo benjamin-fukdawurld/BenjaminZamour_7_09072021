@@ -3,26 +3,12 @@ import { PostContainer } from "./style";
 
 import PostActions from "./PostActions";
 
-import PostTitle from "./PostTitle";
+import PostHeader from "./PostHeader";
 import PostData from "./PostData";
-import PostModel from "../../../../interfaces/Post";
 
-import Context from "../../../../Context";
+import Context from "../../Context";
 
-interface UserVote {
-  postId: number;
-  value: number;
-}
-export interface PostProps {
-  post: PostModel;
-  onVote: (value: number) => void;
-  vote?: UserVote | null;
-}
-
-export interface PostState {
-  liked: boolean;
-  disliked: boolean;
-}
+import { PostProps, PostState } from "./interfaces";
 
 export default class Post extends Component<PostProps, PostState> {
   get liked() {
@@ -37,8 +23,12 @@ export default class Post extends Component<PostProps, PostState> {
     return (
       <React.Fragment>
         <PostContainer component="article" data-id={this.props.post.id}>
-          <PostTitle title={this.props.post.title} />
-          <PostTitle.Divider />
+          <PostHeader
+            author={this.props.post.author}
+            authorId={this.props.post.authorId}
+            authorAvatarUrl={this.props.post.authorAvatarUrl}
+            title={this.props.post.title}
+          />
           <PostData
             mediaUrl={this.props.post.mediaUrl}
             title={this.props.post.title}
