@@ -16,7 +16,7 @@ export default function Information(props: any) {
       justifyContent="space-between"
       style={{ marginBottom: theme.spacing(2) }}
     >
-      <Grid item xs={12} lg={6}>
+      <Grid item xs={12} sm={6}>
         <Field
           label="Nom"
           value={props.user?.lastName}
@@ -30,7 +30,7 @@ export default function Information(props: any) {
         />
       </Grid>
 
-      <Grid item xs={12} lg={6}>
+      <Grid item xs={12} sm={6}>
         <Field
           label="Prénom"
           value={props.user?.firstName}
@@ -44,7 +44,7 @@ export default function Information(props: any) {
         />
       </Grid>
 
-      <Grid item xs={12} lg={6}>
+      <Grid item xs={12} sm={6}>
         <Field
           label="Email"
           value={props.user?.email}
@@ -58,7 +58,7 @@ export default function Information(props: any) {
         />
       </Grid>
 
-      <Grid item xs={12} lg={6}>
+      <Grid item xs={12} sm={6}>
         <Field
           label="Date de naîssance"
           value={props.user?.birthDate}
@@ -81,7 +81,7 @@ export default function Information(props: any) {
         />
       </Grid>
 
-      <Grid item xs={12} lg={6}>
+      <Grid item xs={12} sm={6}>
         <Field
           label="Poste"
           value={props.user?.jobTitle}
@@ -95,7 +95,7 @@ export default function Information(props: any) {
         />
       </Grid>
 
-      <Grid item xs={12} lg={6}>
+      <Grid item xs={12} sm={6}>
         <Field
           label="Service"
           value={props.user?.departmentId}
@@ -123,7 +123,7 @@ export default function Information(props: any) {
         </Field>
       </Grid>
 
-      <Grid item xs={12} lg={12}>
+      <Grid item xs={12} sm={12}>
         <Field
           label="Biographie"
           value={props.user?.biography}

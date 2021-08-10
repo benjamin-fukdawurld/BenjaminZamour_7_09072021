@@ -7,6 +7,12 @@ import createServer from "../../../server/server";
 import UserProfile from "./UserProfile";
 import Context from "../../../Context";
 
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { theme } from "../../../Theme";
+
 interface UserProfileProps {
   id?: number;
 }
@@ -16,6 +22,12 @@ interface UserProfileState {
   touched: any;
   userNewValues: any | null;
   departments: any[];
+  alert?: {
+    open: boolean;
+    severity: "error" | "success" | "info" | "warning";
+    message: string;
+  };
+  progress?: boolean;
 }
 
 export default class UserProfilePage extends Component<
@@ -41,6 +53,7 @@ export default class UserProfilePage extends Component<
 
   async handleSaveUser() {
     try {
+      this.setState({ progress: true });
       if (Object.keys(this.state.touched).length === 0) {
         return;
       }
@@ -85,14 +98,22 @@ export default class UserProfilePage extends Component<
           return [key, value ? value : ""];
         })
       );
-      this.setState({ userNewValues, touched: {} });
+      this.setState({ progress: undefined, userNewValues, touched: {} });
     } catch (err: any) {
-      console.error(err.message);
+      this.setState({ progress: undefined });
+      this.setState({
+        alert: {
+          open: true,
+          severity: "error",
+          message: "Échec de la mise à jour du profil",
+        },
+      });
     }
   }
 
   async componentDidMount() {
     try {
+      this.setState({ progress: true });
       const userRes = await this.server.get(`users/${this.state.id}/profile`);
       const userNewValues = Object.fromEntries(
         Object.entries(userRes.data).map(([key, value]) => {
@@ -104,9 +125,20 @@ export default class UserProfilePage extends Component<
         })
       );
       const departmentRes = await this.server.get(`departments`);
-      this.setState({ userNewValues, departments: departmentRes.data });
+      this.setState({
+        progress: undefined,
+        userNewValues,
+        departments: departmentRes.data,
+      });
     } catch (err: any) {
-      console.error(err.message);
+      this.setState({ progress: undefined });
+      this.setState({
+        alert: {
+          open: true,
+          severity: "error",
+          message: "Échec du chargement du profil",
+        },
+      });
     }
   }
 
@@ -143,6 +175,24 @@ export default class UserProfilePage extends Component<
           }}
           onSave={this.handleSaveUser}
         />
+        <Snackbar
+          open={this.state.alert?.open}
+          autoHideDuration={6000}
+          onClose={() => this.setState({ alert: undefined })}
+        >
+          <Alert severity={this.state.alert?.severity}>
+            {this.state.alert?.message}
+          </Alert>
+        </Snackbar>
+        <Backdrop
+          open={!!this.state.progress}
+          style={{
+            zIndex: theme.zIndex.drawer + 1,
+            color: theme.palette.primary.main,
+          }}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </Main>
     );
   }

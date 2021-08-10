@@ -9,6 +9,7 @@ import PostData from "./PostData";
 import Context from "../../Context";
 
 import { PostProps, PostState } from "./interfaces";
+import Comment from "../Comment";
 
 export default class Post extends Component<PostProps, PostState> {
   get liked() {
@@ -35,6 +36,16 @@ export default class Post extends Component<PostProps, PostState> {
             description={this.props.post.description}
             tags={this.props.post.tags}
           />
+          {["lorem ipsum", "sit amet doloris"].map((text: string) => (
+            <Comment
+              text={text}
+              employeeId={1}
+              login="admin"
+              avatarUrl={null}
+              postId={1}
+              respondTo={null}
+            />
+          ))}
         </PostContainer>
         <PostActions
           liked={this.liked}

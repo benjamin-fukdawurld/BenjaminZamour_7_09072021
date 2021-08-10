@@ -7,6 +7,8 @@ export interface PostHeaderProps {
   author: string;
   authorAvatarUrl?: string | null;
   title: string;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 export interface PostProps {

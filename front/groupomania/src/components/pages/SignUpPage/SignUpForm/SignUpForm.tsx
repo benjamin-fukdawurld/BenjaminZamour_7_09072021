@@ -13,6 +13,12 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Context from "../../../../Context";
 
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { theme } from "../../../../Theme";
+
 interface SignUpFormState {
   values: {
     email: string;
@@ -33,9 +39,11 @@ interface SignUpFormState {
     confirmPassword: boolean;
   };
   alert?: {
-    variant: string;
+    open: boolean;
+    severity: "error" | "success" | "info" | "warning";
     message: string;
   };
+  progress?: boolean;
 }
 
 export default class SignUpForm extends Component<{}, SignUpFormState> {
@@ -117,6 +125,7 @@ export default class SignUpForm extends Component<{}, SignUpFormState> {
     const { login, email, password } = this.state.values;
 
     try {
+      this.setState({ progress: true });
       await this.context.userService.signUp({ login, email, password });
       await this.context.userService.logIn({ login, password });
       if (this.context.updater) {
@@ -124,9 +133,13 @@ export default class SignUpForm extends Component<{}, SignUpFormState> {
       }
       window.location.href = "/";
     } catch (err: any) {
-      console.error(err);
+      this.setState({ progress: undefined });
       this.setState({
-        alert: { variant: "danger", message: err.message },
+        alert: {
+          open: true,
+          severity: "error",
+          message: "Inscription échouée",
+        },
       });
     }
   }
@@ -273,6 +286,24 @@ export default class SignUpForm extends Component<{}, SignUpFormState> {
             </div>
           </div>
         </Form>
+        <Snackbar
+          open={this.state.alert?.open}
+          autoHideDuration={6000}
+          onClose={() => this.setState({ alert: undefined })}
+        >
+          <Alert severity={this.state.alert?.severity}>
+            {this.state.alert?.message}
+          </Alert>
+        </Snackbar>
+        <Backdrop
+          open={!!this.state.progress}
+          style={{
+            zIndex: theme.zIndex.drawer + 1,
+            color: theme.palette.primary.main,
+          }}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </React.Fragment>
     );
   }

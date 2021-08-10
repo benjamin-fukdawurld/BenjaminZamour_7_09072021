@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
     color: !!props.value
       ? theme.palette.text.primary
       : theme.palette.text.secondary,
+    overflow: "hidden",
     textOverflow: "ellipsis",
   }),
 }));

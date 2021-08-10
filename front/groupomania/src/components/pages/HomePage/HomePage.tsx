@@ -14,6 +14,12 @@ import AuthData from "../../../interfaces/AuthData";
 import Context from "../../../Context";
 import Vote from "../../../interfaces/Vote";
 
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { theme } from "../../../Theme";
+
 interface HomePageState {
   posts: PostProps[];
   newPostTitle: string;
@@ -21,6 +27,12 @@ interface HomePageState {
   newPostTags: string[];
   newPostImageUrl: string;
   newPostImage: File | null;
+  alert?: {
+    open: boolean;
+    severity: "error" | "success" | "info" | "warning";
+    message: string;
+  };
+  progress?: boolean;
 }
 
 export default class HomPage extends Component<{}, HomePageState> {
@@ -48,6 +60,7 @@ export default class HomPage extends Component<{}, HomePageState> {
 
   async handleSubmit(event: any) {
     try {
+      this.setState({ progress: true });
       let post = {
         employeeId: this.authData?.userId as number,
         title: this.state.newPostTitle,
@@ -64,14 +77,21 @@ export default class HomPage extends Component<{}, HomePageState> {
         data = post;
       }
 
-      console.log(data);
       await this.context.postService.add(data);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      this.setState({ progress: undefined });
+      this.setState({
+        alert: {
+          open: true,
+          severity: "error",
+          message: "Échec de la publication",
+        },
+      });
     }
   }
 
   async componentDidMount() {
+    this.setState({ progress: true });
     const userId = this.authData?.userId as number;
     const posts = (await this.context.postService.getAll()) as PostModel[];
 
@@ -85,12 +105,19 @@ export default class HomPage extends Component<{}, HomePageState> {
         votes.push(vote);
       } catch (error: any) {
         if (error.response.status !== 404) {
-          console.log(error);
+          this.setState({
+            alert: {
+              open: true,
+              severity: "error",
+              message: "Échec de la publication",
+            },
+          });
         }
       }
     }
 
     this.setState({
+      progress: undefined,
       posts: posts.map((post: PostModel) => {
         const vote = votes.find((value: Vote) => value.postId === post.id);
         if (vote) {
@@ -206,6 +233,24 @@ export default class HomPage extends Component<{}, HomePageState> {
         {this.state.posts.map((post: PostProps) => (
           <Post key={post.post.id} {...post} />
         ))}
+        <Snackbar
+          open={this.state.alert?.open}
+          autoHideDuration={6000}
+          onClose={() => this.setState({ alert: undefined })}
+        >
+          <Alert severity={this.state.alert?.severity}>
+            {this.state.alert?.message}
+          </Alert>
+        </Snackbar>
+        <Backdrop
+          open={!!this.state.progress}
+          style={{
+            zIndex: theme.zIndex.drawer + 1,
+            color: theme.palette.primary.main,
+          }}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </Main>
     );
   }

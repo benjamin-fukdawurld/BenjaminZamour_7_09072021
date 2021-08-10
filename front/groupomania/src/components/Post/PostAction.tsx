@@ -3,6 +3,7 @@ import { useTheme } from "@material-ui/styles";
 import Hidden from "@material-ui/core/Hidden";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
+import Badge from "@material-ui/core/Badge";
 
 import { PostActionProps } from "./interfaces";
 
@@ -42,7 +43,16 @@ export default function PostAction(props: PostActionProps) {
           }}
           onClick={props.onClick}
         >
-          <Icon />
+          <Badge
+            badgeContent={props.count && props.count}
+            color="secondary"
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+          >
+            <Icon />
+          </Badge>
         </IconButton>
       </Hidden>
     </React.Fragment>
