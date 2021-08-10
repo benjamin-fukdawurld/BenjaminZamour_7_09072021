@@ -11,12 +11,15 @@ export default function ConnectionLinks(props: any) {
   return (
     <div>
       <Link to="/signin">
-        <IconButton color="primary" title="se connecter" style={{ padding: 0 }}>
+        <IconButton
+          color="primary"
+          title="se connecter"
+          style={{ padding: 0, marginRight: theme.spacing(2) }}
+        >
           <PersonOutlineIcon
             style={{
               height: "3rem",
               width: "3rem",
-              marginRight: theme.spacing(2),
             }}
           />
         </IconButton>

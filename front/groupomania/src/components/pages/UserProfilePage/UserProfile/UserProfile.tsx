@@ -77,29 +77,31 @@ export default class UserProfile extends Component<
             isEditing={this.state.isEditing}
             onChange={this.props.onChange}
           />
-          <div style={{ textAlign: "right" }}>
-            <Button
-              variant="contained"
-              size="small"
-              color="primary"
-              onClick={() => {
-                if (this.state.isEditing) {
-                  this.props.onSave();
-                }
+          {!this.props.isReadOnly && (
+            <div style={{ textAlign: "right" }}>
+              <Button
+                variant="contained"
+                size="small"
+                color="primary"
+                onClick={() => {
+                  if (this.state.isEditing) {
+                    this.props.onSave();
+                  }
 
-                if (this.state.avatarPreviewUrl) {
-                  URL.revokeObjectURL(this.state.avatarPreviewUrl);
-                }
+                  if (this.state.avatarPreviewUrl) {
+                    URL.revokeObjectURL(this.state.avatarPreviewUrl);
+                  }
 
-                this.setState({
-                  isEditing: !this.state.isEditing,
-                  avatarPreviewUrl: null,
-                });
-              }}
-            >
-              {this.state.isEditing ? "Enregistrer" : "Éditer"}
-            </Button>
-          </div>
+                  this.setState({
+                    isEditing: !this.state.isEditing,
+                    avatarPreviewUrl: null,
+                  });
+                }}
+              >
+                {this.state.isEditing ? "Enregistrer" : "Éditer"}
+              </Button>
+            </div>
+          )}
         </InfoContainer>
       </User>
     );

@@ -57,9 +57,13 @@ class App extends Component<{}, AppState> {
             <Route exact path="/signin">
               <SignInPage />
             </Route>
-            <Route exact path="/user">
-              <UserProfilePage />
-            </Route>
+            <Route
+              exact
+              path={["/user", "/user/:id"]}
+              render={(props: any) => (
+                <UserProfilePage id={props.match?.params?.id} />
+              )}
+            />
           </div>
         </ThemeProvider>
       </Context.Provider>

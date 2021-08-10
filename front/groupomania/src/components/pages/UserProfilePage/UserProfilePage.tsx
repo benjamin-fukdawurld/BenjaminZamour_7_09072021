@@ -7,7 +7,9 @@ import createServer from "../../../server/server";
 import UserProfile from "./UserProfile";
 import Context from "../../../Context";
 
-interface UserProfileProps {}
+interface UserProfileProps {
+  id?: number;
+}
 
 interface UserProfileState {
   id: number;
@@ -26,7 +28,7 @@ export default class UserProfilePage extends Component<
     super(props);
 
     this.state = {
-      id: getAuthData()?.userId as number,
+      id: props.id || (getAuthData()?.userId as number),
       userNewValues: null,
       touched: {},
       departments: [],
