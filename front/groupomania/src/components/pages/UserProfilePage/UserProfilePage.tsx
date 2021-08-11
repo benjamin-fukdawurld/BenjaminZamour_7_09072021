@@ -157,7 +157,7 @@ export default class UserProfilePage extends Component<
       return <Redirect to="/signin" />;
     }
 
-    console.log(this.context.user.privilege);
+    console.log(this.context.authData.privilege);
 
     return (
       <Main>
@@ -167,7 +167,7 @@ export default class UserProfilePage extends Component<
           isReadOnly={
             this.state.userNewValues?.id &&
             this.state.userNewValues.id !== this.context.authData.userId &&
-            this.context.user.privilege === 0
+            this.context.authData.privilege === 0
           }
           touched={this.state.touched}
           onChange={(fields: any) => {

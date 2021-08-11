@@ -25,7 +25,7 @@ export default class Post extends Component<PostProps, PostState> {
       isEditing: false,
       title: props.post.title,
       description: props.post.description ?? "",
-      mediaUrl: null,
+      mediaUrl: props.post.mediaUrl,
       tags: props.post.tags,
       comments: [],
       commentDelta: 0,
@@ -82,11 +82,11 @@ export default class Post extends Component<PostProps, PostState> {
           />
           <PostData
             isEditing={this.state.isEditing}
-            mediaUrl={this.state.mediaUrl ?? this.props.post.mediaUrl}
+            mediaUrl={this.state.mediaUrl}
             title={this.props.post.title}
             description={this.state.description}
             tags={this.state.tags}
-            onDescriptionChange={(event) => {
+            onDescriptionChange={(event: any) => {
               this.setState({ description: event.target.value });
             }}
             onAddTag={(tag: string) => {
@@ -101,6 +101,9 @@ export default class Post extends Component<PostProps, PostState> {
               this.setState({ tags });
             }}
             onDeleteImage={() => {
+              if (this.state.mediaUrl) {
+                URL.revokeObjectURL(this.state.mediaUrl as string);
+              }
               this.setState({ mediaUrl: null });
             }}
             onImageChange={(image: any, previewUrl: string) => {

@@ -118,7 +118,17 @@ export default {
   },
 
   async updatePost(id: number, post: Post): Promise<Post[]> {
-    return knexDb('post').where({ id }).update(post).returning(['id', 'title']);
+    const data = Object.fromEntries(
+      Object.entries(post).map((entry: [string, any]) => {
+        if (entry[0] === 'mediaUrl') {
+          if (post.mediaUrl === null) {
+            return [entry[0], knexDb.raw('NULL')];
+          }
+        }
+        return entry;
+      }),
+    );
+    return knexDb('post').where({ id }).update(data).returning(['id', 'title']);
   },
 
   async deletePost(id: number): Promise<number[]> {

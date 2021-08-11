@@ -69,6 +69,7 @@ export default function PostData(props: PostDataProps) {
             startIcon={<ImageIcon />}
             component="span"
             size="small"
+            style={{ marginTop: theme.spacing(1) }}
           >
             <input
               accept="image/*"
@@ -89,7 +90,7 @@ export default function PostData(props: PostDataProps) {
           </Button>
         </label>
       )}
-      {props.description &&
+      {props.description !== null &&
         (props.isEditing ? (
           <TextField
             multiline

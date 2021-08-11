@@ -6,7 +6,14 @@ import logger from '../common/logger';
 import { parseQueryOptions } from '../database';
 
 class PostController {
-  private static postEditableColumns = ['employeeId', 'title', 'mediaUrl', 'tags', 'description'];
+  private static postEditableColumns = [
+    'employeeId',
+    'title',
+    'mediaUrl',
+    'tags',
+    'description',
+    'mediaUrl',
+  ];
 
   private static getPostPatchData(req: Request) {
     if (req.file) {
