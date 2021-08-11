@@ -142,7 +142,7 @@ export default class Post extends Component<PostProps, PostState> {
                 this.setState({ commentDelta: this.state.commentDelta + 1 });
               }}
               isEditable={
-                this.props.post.authorId === this.context?.user?.id ||
+                comment.employeeId === this.context?.user?.id ||
                 this.context?.user?.privilege > 0
               }
             />
