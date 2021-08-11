@@ -28,6 +28,7 @@ export default function MoreMenu(props: MenuProps) {
   return (
     <React.Fragment>
       <IconButton
+        title={props.label}
         aria-controls={props.label}
         aria-haspopup="true"
         onClick={handleClick}

@@ -12,6 +12,8 @@ import { PostProps, PostState } from "./interfaces";
 import Comment from "../Comment";
 import CommentModel from "../../interfaces/Comment";
 import Collapse from "@material-ui/core/Collapse";
+import Button from "@material-ui/core/Button";
+import { theme } from "../../Theme";
 
 export default class Post extends Component<PostProps, PostState> {
   static contextType = Context;
@@ -20,6 +22,11 @@ export default class Post extends Component<PostProps, PostState> {
     super(props);
 
     this.state = {
+      isEditing: false,
+      title: props.post.title,
+      description: props.post.description ?? "",
+      mediaUrl: null,
+      tags: props.post.tags,
       comments: [],
       commentDelta: 0,
       newComment: null,
@@ -60,22 +67,49 @@ export default class Post extends Component<PostProps, PostState> {
       <React.Fragment>
         <PostContainer component="article" data-id={this.props.post.id}>
           <PostHeader
+            isEditing={this.state.isEditing}
             author={this.props.post.author}
             authorId={this.props.post.authorId}
             authorAvatarUrl={this.props.post.authorAvatarUrl}
-            title={this.props.post.title}
+            title={this.state.title}
             isEditable={
               this.props.post.authorId === this.context?.user?.id ||
               this.context?.user?.privilege > 0
             }
-            onEdit={() => console.log("not implemented yet")}
+            onChange={(title: string) => this.setState({ title })}
+            onEdit={() => this.setState({ isEditing: true })}
             onDelete={this.handleDelete}
           />
           <PostData
-            mediaUrl={this.props.post.mediaUrl}
+            isEditing={this.state.isEditing}
+            mediaUrl={this.state.mediaUrl ?? this.props.post.mediaUrl}
             title={this.props.post.title}
-            description={this.props.post.description}
-            tags={this.props.post.tags}
+            description={this.state.description}
+            tags={this.state.tags}
+            onDescriptionChange={(event) => {
+              this.setState({ description: event.target.value });
+            }}
+            onAddTag={(tag: string) => {
+              const tags = this.state.tags;
+              tags.push(tag);
+              this.setState({ tags });
+            }}
+            onDeleteTag={(tag: string) => {
+              const tags = this.state.tags.filter(
+                (current: string) => tag !== current
+              );
+              this.setState({ tags });
+            }}
+            onDeleteImage={() => {
+              this.setState({ mediaUrl: null });
+            }}
+            onImageChange={(image: any, previewUrl: string) => {
+              if (this.state.mediaUrl) {
+                URL.revokeObjectURL(this.state.mediaUrl as string);
+              }
+
+              this.setState({ image, mediaUrl: previewUrl });
+            }}
           />
           {comments.map((comment: CommentModel, index: number) => (
             <Comment
@@ -136,6 +170,57 @@ export default class Post extends Component<PostProps, PostState> {
               isEditing
             />
           </Collapse>
+          {this.state.isEditing && (
+            <div
+              style={{
+                textAlign: "right",
+                marginBottom: theme.spacing(1),
+                marginRight: theme.spacing(1),
+              }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ marginRight: theme.spacing(1) }}
+                onClick={(event: any) => {
+                  this.setState({
+                    title: this.props.post.title,
+                    description: this.props.post.description ?? "",
+                    tags: this.props.post.tags,
+                    comments: [],
+                    isEditing: false,
+                  });
+                }}
+              >
+                Annuler
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={(event: any) => {
+                  const post = {
+                    title: this.state.title,
+                    description: this.state.description,
+                    mediaUrl:
+                      this.state.mediaUrl === null
+                        ? this.state.mediaUrl
+                        : undefined,
+                  };
+                  if (this.state.image) {
+                    const data = new FormData();
+                    data.append("image", this.state.image);
+                    data.append("post", JSON.stringify(post));
+                    this.context.postService.update(this.props.post.id, data);
+                  }
+
+                  this.context.postService.update(this.props.post.id, post);
+                  this.setState({ isEditing: false });
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          )}
         </PostContainer>
         <PostActions
           liked={this.liked}

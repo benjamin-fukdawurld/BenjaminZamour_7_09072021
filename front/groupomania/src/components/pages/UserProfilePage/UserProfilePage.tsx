@@ -49,6 +49,7 @@ export default class UserProfilePage extends Component<
     this.server = createServer(getAuthData()?.token);
 
     this.handleSaveUser = this.handleSaveUser.bind(this);
+    this.handleDeleteUser = this.handleDeleteUser.bind(this);
   }
 
   async handleSaveUser() {
@@ -111,6 +112,15 @@ export default class UserProfilePage extends Component<
     }
   }
 
+  async handleDeleteUser() {
+    this.setState({ progress: true });
+    await this.context.userService.del(this.state.id);
+    if (this.context.user.id === this.state.id) {
+      this.context.userService.logOut();
+    }
+    window.location.href = "/";
+  }
+
   async componentDidMount() {
     try {
       this.setState({ progress: true });
@@ -147,6 +157,8 @@ export default class UserProfilePage extends Component<
       return <Redirect to="/signin" />;
     }
 
+    console.log(this.context.user.privilege);
+
     return (
       <Main>
         <UserProfile
@@ -154,7 +166,8 @@ export default class UserProfilePage extends Component<
           departments={this.state.departments}
           isReadOnly={
             this.state.userNewValues?.id &&
-            this.state.userNewValues.id !== this.context.authData.userId
+            this.state.userNewValues.id !== this.context.authData.userId &&
+            this.context.user.privilege === 0
           }
           touched={this.state.touched}
           onChange={(fields: any) => {
@@ -174,6 +187,7 @@ export default class UserProfilePage extends Component<
             this.setState({ userNewValues, touched });
           }}
           onSave={this.handleSaveUser}
+          onDelete={this.handleDeleteUser}
         />
         <Snackbar
           open={this.state.alert?.open}

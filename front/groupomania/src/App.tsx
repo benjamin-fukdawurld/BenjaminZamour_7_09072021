@@ -6,7 +6,6 @@ import HomePage from "./components/pages/HomePage";
 import SignUpPage from "./components/pages/SignUpPage";
 import SignInPage from "./components/pages/SignInPage";
 import UserProfilePage from "./components/pages/UserProfilePage";
-import PostPage from "./components/pages/PostPage";
 
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -64,16 +63,6 @@ class App extends Component<{}, AppState> {
               path={["/user", "/user/:id"]}
               render={(props: any) => (
                 <UserProfilePage id={props.match?.params?.id} />
-              )}
-            />
-            <Route
-              exact
-              path={["/post", "/post/:id"]}
-              render={(props: any) => (
-                <PostPage
-                  id={props.match?.params?.id}
-                  isEditing={props.match?.query?.edit}
-                />
               )}
             />
           </div>

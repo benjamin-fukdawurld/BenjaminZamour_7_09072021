@@ -113,6 +113,7 @@ export default class ContextManager {
               title?: string;
               tags?: string;
               description?: string;
+              mediaUrl?: null;
             }
           | { image: any; data: string }
       ) => updatePost(this.server, id, data),

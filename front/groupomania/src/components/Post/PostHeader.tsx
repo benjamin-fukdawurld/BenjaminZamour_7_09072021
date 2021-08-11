@@ -6,6 +6,8 @@ import UserLink from "../common/UserLink";
 import MoreMenu from "../common/MoreMenu/MoreMenu";
 
 import { PostHeaderProps } from "./interfaces";
+import { TextField } from "@material-ui/core";
+import { theme } from "../../Theme";
 
 export default function PostHeader(props: PostHeaderProps) {
   return (
@@ -42,7 +44,15 @@ export default function PostHeader(props: PostHeaderProps) {
           )}
         </Grid>
       </Grid>
-      <PostTitle title={props.title} />
+      {props.isEditing ? (
+        <TextField
+          value={props.title}
+          style={{ marginLeft: theme.spacing(2.5) }}
+          onChange={(event: any) => props.onChange(event.target.value)}
+        />
+      ) : (
+        <PostTitle title={props.title} />
+      )}
       <PostTitle.Divider />
     </React.Fragment>
   );

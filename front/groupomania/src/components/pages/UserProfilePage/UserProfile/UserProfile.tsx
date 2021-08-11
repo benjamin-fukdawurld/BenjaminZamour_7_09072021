@@ -14,6 +14,7 @@ interface UserProfileProps {
   touched: any;
   onChange: (usr: any) => void;
   onSave: () => void;
+  onDelete: () => void;
 }
 
 interface UserProfileState {
@@ -78,11 +79,22 @@ export default class UserProfile extends Component<
             onChange={this.props.onChange}
           />
           {!this.props.isReadOnly && (
-            <div style={{ textAlign: "right" }}>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button
                 variant="contained"
                 size="small"
                 color="primary"
+                onClick={() => {
+                  this.props.onDelete();
+                }}
+              >
+                Supprimer
+              </Button>
+              <Button
+                variant="contained"
+                size="small"
+                color="primary"
+                style={{ marginLeft: "1rem" }}
                 onClick={() => {
                   if (this.state.isEditing) {
                     this.props.onSave();
