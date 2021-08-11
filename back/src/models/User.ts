@@ -11,4 +11,5 @@ export interface User {
   departmentId?: number;
   departmentName?: string;
   privilege?: number;
+  avatarUrl?: string;
 }

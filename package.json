@@ -26,5 +26,7 @@
   "bugs": {
     "url": "https://github.com/benjamin-fukdawurld/BenjaminZamour_7_09072021/issues"
   },
-  "homepage": "https://github.com/benjamin-fukdawurld/BenjaminZamour_7_09072021#readme"
+  "homepage": "https://github.com/benjamin-fukdawurld/BenjaminZamour_7_09072021#readme",
+  "dependencies": {},
+  "devDependencies": {}
 }

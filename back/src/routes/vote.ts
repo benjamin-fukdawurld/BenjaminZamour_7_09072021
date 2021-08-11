@@ -7,6 +7,8 @@ import auth from '../middlewares/auth';
 const router = Router();
 
 router.get('/', auth(), controller.getVotes.bind(controller));
+router.get('/comment/:commentId', auth(), controller.getVotes.bind(controller));
+router.get('/post/:postId/', auth(), controller.getVotes.bind(controller));
 
 router.post('/', auth(), controller.addVote.bind(controller));
 

@@ -54,6 +54,20 @@ services:
         aliases:
           - groupomania.api
     restart: "unless-stopped"
+  application:
+    container_name: groupomania_application
+    build:
+      context: ./front/groupomania
+      dockerfile: Dockerfile
+    volumes:
+      - ./front/groupomania/src:/app/src
+    ports:
+      - 3000:3000
+    networks:
+      net:
+        aliases:
+          - groupomania.application
+    restart: "unless-stopped"
 networks:
   net:
     driver: bridge

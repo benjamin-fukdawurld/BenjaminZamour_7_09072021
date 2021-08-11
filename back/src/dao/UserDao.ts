@@ -1,11 +1,23 @@
 import { User } from '../models/User';
 import { knexDb, QueryOptions } from '../database';
-import logger from '../common/logger';
 
 function getSelectedColumnsString(columns?: string[]): string {
   let selectedColumns: string[] = [];
   if (!columns?.length) {
-    selectedColumns = ['employee.*', 'department.name as department_name'];
+    selectedColumns = [
+      'employee.id',
+      'employee.email',
+      'employee.login',
+      'employee.first_name',
+      'employee.last_name',
+      'employee.job_title',
+      'employee.birth_date',
+      'employee.biography',
+      'employee.department_id',
+      'employee.privilege',
+      'employee.avatar_url',
+      'department.name as department_name',
+    ];
   } else {
     selectedColumns = [...columns.map((col) => `employee.${col}`)];
     if (columns.includes('departmentId')) {

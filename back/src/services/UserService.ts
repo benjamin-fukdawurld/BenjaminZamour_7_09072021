@@ -28,7 +28,7 @@ async function getUsers(options?: QueryOptions): Promise<ServiceResponse<User[]>
 }
 
 async function getUser(id: number): Promise<ServiceResponse<User>> {
-  const user = await dao.getUser(id, ['id', 'login']);
+  const user = await dao.getUser(id, ['id', 'login', 'avatar_url']);
 
   if (!user) {
     return { status: 404, result: { message: `User '${id}' not found` } };
@@ -128,7 +128,7 @@ async function signUp(email: string, login: string, password: string) {
 
 async function logIn(user: User) {
   const users = await dao.getUsers({
-    columns: ['id', 'login', 'email', 'password', 'privilege'],
+    columns: ['id', 'login', 'email', 'password', 'privilege', 'avatar_url'],
     filters: (query: any) => {
       if (user.login) {
         query.orWhere('login', user.login);
@@ -152,7 +152,10 @@ async function logIn(user: User) {
     status: 200,
     result: {
       message: 'User logged',
-      userId: user.id,
+      userId: users[0].id,
+      login: users[0].login,
+      privilege: users[0].privilege,
+      avatarUrl: users[0].avatarUrl,
       token: jwt.sign(
         { id: users[0].id, privilege: users[0].privilege },
         process.env.TOKEN_KEY as string,

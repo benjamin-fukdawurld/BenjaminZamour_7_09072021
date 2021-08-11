@@ -6,8 +6,22 @@ import { parseQueryOptions } from '../database';
 
 export class VoteController {
   public async getVotes(req: Request, res: Response) {
+    const { commentId, postId } = req.params;
+    const filters =
+      commentId || postId
+        ? (query: any) => {
+            if (commentId) {
+              return query.where({ commentId });
+            } else if (postId) {
+              return query.where({ postId });
+            }
+
+            return query;
+          }
+        : undefined;
+
     try {
-      const serviceResponse = await service.getVotes(parseQueryOptions(req.query));
+      const serviceResponse = await service.getVotes({ filters, ...parseQueryOptions(req.query) });
       res.status(serviceResponse.status).send(serviceResponse.result);
     } catch (err) {
       res.status(500).send({ message: 'Unable to get vote list' });
