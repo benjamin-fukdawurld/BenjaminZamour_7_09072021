@@ -3,7 +3,7 @@ import { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { getAuthData, isLogged } from "../../../common/auth";
 import Post, { PostProps } from "../../Post";
-import PostForm from "./PostForm";
+import PostForm from "../../Post/PostForm";
 import Main from "../../common/Main";
 
 import PostModel from "../../../interfaces/Post";

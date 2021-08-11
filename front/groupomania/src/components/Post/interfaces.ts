@@ -1,4 +1,5 @@
 import { ElementType } from "react";
+import CommentModel from "../../interfaces/Comment";
 import PostModel from "../../interfaces/Post";
 import Vote from "../../interfaces/Vote";
 
@@ -7,6 +8,7 @@ export interface PostHeaderProps {
   author: string;
   authorAvatarUrl?: string | null;
   title: string;
+  isEditable?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
 }
@@ -18,8 +20,9 @@ export interface PostProps {
 }
 
 export interface PostState {
-  liked: boolean;
-  disliked: boolean;
+  comments: CommentModel[];
+  commentDelta: number;
+  newComment: CommentModel | null;
 }
 
 export interface PostActionProps {

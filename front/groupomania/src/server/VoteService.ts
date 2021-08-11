@@ -51,7 +51,7 @@ export async function updateVote(
     (data.commentId ? `comment/${data.commentId}/` : `post/${data.postId}/`) +
     `${data.employeeId}`;
 
-  return await server.put<Vote>(uri, { value: data.value });
+  return await server.put(uri, { value: data.value });
 }
 
 export async function deleteVote(
@@ -61,11 +61,11 @@ export async function deleteVote(
     postId?: number | null;
     commentId?: number | null;
   }
-) {
+): Promise<AxiosResponse> {
   const uri =
     "/votes/" +
     (data.commentId ? `comment/${data.commentId}/` : `post/${data.postId}/`) +
     `${data.employeeId}`;
 
-  await server.delete<Vote>(uri);
+  return await server.delete(uri);
 }

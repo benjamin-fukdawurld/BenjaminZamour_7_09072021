@@ -1,8 +1,14 @@
 import { AxiosInstance, AxiosResponse } from "axios";
 import Post from "../interfaces/Post";
 
-export async function getPosts(server: AxiosInstance): Promise<Post[]> {
-  const res = await server.get("/posts");
+export async function getPosts(
+  server: AxiosInstance,
+  options?: { offset?: number }
+): Promise<Post[]> {
+  const offset = options?.offset ?? 0;
+  const res = await server.get(
+    `/posts?limit=10&offset=${offset}&orderBy=publishDate+d,upVoteCount+d`
+  );
 
   return res.data.map(
     (post: any): Post => ({
@@ -78,6 +84,9 @@ export async function updatePost(
   return server.patch(`/posts/${id}`, data);
 }
 
-export async function deletePost(server: AxiosInstance, id: number) {
+export async function deletePost(
+  server: AxiosInstance,
+  id: number
+): Promise<AxiosResponse> {
   return server.delete(`/posts/${id}`);
 }

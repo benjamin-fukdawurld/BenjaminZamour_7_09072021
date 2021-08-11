@@ -88,10 +88,6 @@ export async function updateUser(
   return server.patch(`/users/${id}`, data);
 }
 
-export async function deletePost(server: AxiosInstance, id: number) {
-  return server.delete(`/users/${id}`);
-}
-
 export async function logIn(
   server: AxiosInstance,
   data: { login?: string; email?: string; password: string }
@@ -110,10 +106,13 @@ export async function logIn(
 export async function signUp(
   server: AxiosInstance,
   data: { login: string; email: string; password: string }
-) {
+): Promise<AxiosResponse> {
   return server.post("/users/signup", data);
 }
 
-export async function deleteUser(server: AxiosInstance, id: number) {
+export async function deleteUser(
+  server: AxiosInstance,
+  id: number
+): Promise<AxiosResponse> {
   return server.delete(`/users/${id}`);
 }

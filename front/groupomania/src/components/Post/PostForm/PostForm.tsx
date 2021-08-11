@@ -19,7 +19,7 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ImageIcon from "@material-ui/icons/Image";
-import { theme } from "../../../../Theme";
+import { theme } from "../../../Theme";
 
 const useStyles = makeStyles((theme) => ({
   form: {

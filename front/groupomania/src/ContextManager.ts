@@ -5,6 +5,7 @@ import { theme } from "./Theme";
 
 import AuthData from "./interfaces/AuthData";
 import User from "./interfaces/User";
+import Vote from "./interfaces/Vote";
 
 import createServer from "./server/server";
 
@@ -33,8 +34,14 @@ import {
   updateVote,
   deleteVote,
 } from "./server/VoteService";
-import Vote from "./interfaces/Vote";
 
+import {
+  getComments,
+  getComment,
+  addComment,
+  updateComment,
+  deleteComment,
+} from "./server/CommentService";
 export default class ContextManager {
   server: AxiosInstance;
   theme: Theme;
@@ -190,6 +197,28 @@ export default class ContextManager {
         postId?: number | null;
         commentId?: number | null;
       }) => deleteVote(this.server, data),
+    };
+  }
+
+  get commentService() {
+    return {
+      getAll: async (
+        data: {
+          postId?: number | null;
+          commentId?: number | null;
+        },
+        options?: { offset?: number; respondTo: number | null }
+      ) => getComments(this.server, data, options),
+      getOne: async (id: number) => getComment(this.server, id),
+      add: async (data: {
+        employeeId: number;
+        postId: number;
+        respondTo?: number;
+        text: string;
+      }) => addComment(this.server, data),
+      update: async (id: number, text: string) =>
+        updateComment(this.server, id, text),
+      del: async (id: number) => deleteComment(this.server, id),
     };
   }
 }

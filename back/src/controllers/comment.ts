@@ -5,21 +5,23 @@ import { parseQueryOptions } from '../database';
 
 export class CommentController {
   public async getComments(req: Request, res: Response) {
-    const { employeeId, postId, respondTo } = req.query;
+    const { employeeId, postId, respondTo, noResponse } = req.query;
 
     const filters =
       !!employeeId || !!postId || !!respondTo
         ? (query: any) => {
             if (employeeId) {
-              query.orWhere({ employeeId });
+              query.where({ employeeId });
             }
 
             if (postId) {
-              query.orWhere({ postId });
+              query.where({ postId });
             }
 
             if (respondTo) {
-              query.orWhere({ respondTo });
+              query.where({ respondTo });
+            } else if (noResponse) {
+              query.where({ respondTo: null });
             }
           }
         : undefined;
